@@ -4,21 +4,31 @@ import axios from "axios";
 import "../assests/css/login.css";
 
 const Login = (props) => {
-  const [state, setState] = useState({ username: "", password: "" });
+  const [state, setState] = useState({
+    username: "",
+    password: "",
+    error: true
+  });
 
   const onChange = (e) => {
-      e.preventDefault()
-      console.log(e)
+    e.preventDefault();
     setState((state) => ({ ...state, [e.target.name]: e.target.value }));
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = (e) => {
+    e.preventDefault();
     axios
-      .get("/api/getUserInfo")
+      .post("/api/login", state)
       .then((res) => {
-          
+        if (res.status === 200) {
+          setState((state) => ({ ...state, error: "" }));
+          window.location = "/";
+        } else {
+          setState((state) => ({ ...state, error: res.data.message }));
+        }
       })
       .catch((error) => {
+        setState((state) => ({ ...state, error: error.response.data.message }));
         console.log(error);
       });
   };
@@ -48,7 +58,12 @@ const Login = (props) => {
           />
         </Form.Group>
         <div className="text-center">
-          <Button className="login-submit-btn" variant="primary" type="submit" onClick={() => handleSubmit()}>
+          <Button
+            className="login-submit-btn"
+            variant="primary"
+            type="submit"
+            onClick={(e) => handleSubmit(e)}
+          >
             Submit
           </Button>
         </div>

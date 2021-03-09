@@ -1,19 +1,8 @@
 # simpleRis
 
+FIRST AND FOREMOST THE ONLY REASON WE ARE INCLUDING OUR SECRET KEYS HERE IN THE REPOSITORY WITH THE .env FILE IS BECAUSE THIS IS NOT A REAL APPLICATION AND THE DB WILL BE DELETED ONCE THE APPLICATION HAS BEEN DELIVERED. IN THE REAL WORLD THIS IS A HUGE SECURITY RISK SO KEEP THAT IN MIND.
+
 I created this db so we don't have to download or configure the db on our machines manually. It will be deleted once we are done with the project.
 
-To login to the db with our express server we will use
-DB Name/Username: simpleRIS
-DB_NAME: simpleRIS-35331188
-DB password: simpleRIS123
-DB Server: shareddb-b.hosting.stackcp.net
-
-To login to phpMyAdmin and view the db go to:
-
-https://phpmyadmin.stackcp.com/
-
-Enter the information below
-
-Server: shareddb-b.hosting.stackcp.net
-Username: simpleRIS
-password: simpleRIS123
+For more information on how to run this application you can visit the following link:
+https://simple-ris.atlassian.net/wiki/spaces/SD/pages/98321/How+to+run+the+application+on+your+local+environment
