@@ -1,0 +1,13 @@
+.login-page-container {
+    margin-top: 150px;
+}
+
+.login-form-container {
+    padding: 20px;
+    width: 60%;
+    margin: 0 auto;
+}
+
+.login-submit-btn {
+    margin-top: 20px;
+}
