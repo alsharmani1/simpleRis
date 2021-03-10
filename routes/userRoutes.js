@@ -64,7 +64,6 @@ router.post("/api/users/create", hash, (req, res) => {
           }
           connection.release();
         });
-        res.status(200);
       } else {
         console.log("User already exists");
         res.status(409).json({ message: "User already exists", status: 409 });
