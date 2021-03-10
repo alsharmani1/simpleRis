@@ -4,7 +4,6 @@ const express = require('express')
 const app = express()
 const userRoutes = require('./routes/userRoutes')
 const path = require('path')
-const pool = require('./config/db')
 
 //config env variables
 
