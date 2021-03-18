@@ -3,19 +3,28 @@ const router = express.Router();
 const pool = require("../config/db");
 const { hash, compare } = require("../helpers/helpers");
 
+router.post("/api/logout", (req, res) => {
+  res.clearCookie("auth");
+});
+
 router.post("/api/login", (req, res) => {
-  const { username, password } = req.body;
+  const { username, password, userRole } = req.body;
   const userExistsQuery = `
   SELECT * FROM users WHERE username="${username}"
 `;
 
   pool.query(userExistsQuery, async (error, results, fields) => {
     if (error) console.log(error);
+    const { password, firstName } = results[0];
 
     try {
       const hashedPassword = await compare(password, results[0].password);
       if (hashedPassword) {
-        res.sendStatus(200);
+        console.log("Hello")
+        res
+          .cookie("auth", "User authorized", { maxAge: 60 * 60 * 8 })
+          .status(200)
+          .json({ name: firstName, userRole });
       } else {
         res
           .status(401)

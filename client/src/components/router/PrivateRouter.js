@@ -6,6 +6,7 @@ import {
   Redirect,
 } from "react-router-dom";
 import Navigation from "../common/Navigation";
+import PageNotFound from "../common/PageNotFound";
 
 const PrivateRouter = ({ component: Component, ...rest }) => {
   const authUser = () => {
@@ -14,7 +15,9 @@ const PrivateRouter = ({ component: Component, ...rest }) => {
 
   return authUser() ? (
     <Route {...rest} component={Component} />
-  ) : (
+  ) : authUser() && rest.path === "/*" ?
+    <PageNotFound />
+  :(
     <Redirect to="/login" />
   );
 };

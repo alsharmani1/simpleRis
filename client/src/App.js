@@ -15,6 +15,7 @@ const App = (props) => {
         <Switch>
           <Route exact path="/login" component={Login}/>
           <PrivateRouter exact path="/search" component={UserSearch} />
+          <PrivateRouter path="/*" />
         </Switch>
       </Router>
   );
