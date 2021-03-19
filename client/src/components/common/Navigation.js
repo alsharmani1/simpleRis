@@ -1,18 +1,37 @@
 import React from "react";
-import { Navbar, Nav, Form, Button, FormControl} from "react-bootstrap";
+import axios from "axios";
+import { Navbar, Nav, Form, Button, FormControl } from "react-bootstrap";
 
 const Navigation = () => {
+  const { name } = JSON.parse(localStorage.getItem("userInfo"));
+
+  const logout = () => {
+    axios
+      .get("/api/logout")
+      .then((res) => {
+        localStorage.clear();
+        window.location = "/login";
+      })
+      .catch((error) => console.log(error));
+  };
   return (
     <>
       <Navbar bg="dark" variant="dark">
-        <Navbar.Brand href="/">SimpleRIS</Navbar.Brand>
+        <Navbar.Brand href="#">SimpleRIS</Navbar.Brand>
         <Nav className="mr-auto">
-          <Nav.Link href="#home">Home</Nav.Link>
-          <Nav.Link href="#features">Features</Nav.Link>
-          <Nav.Link href="#pricing">Pricing</Nav.Link>
+          <Nav.Link href="/schedule">Schedule</Nav.Link>
+          <Nav.Link href="/patients">Patients</Nav.Link>
         </Nav>
         <Nav inline>
-          <Button variant="outline-info" onClick={() => window.location = "/login"} >Login</Button>
+          <div style={{ margin: "7px 8px 0", color: "white" }}>
+            Welcome {name}!
+          </div>
+          <Button
+            variant="outline-info"
+            onClick={() => logout()}
+          > 
+            Logout
+          </Button>
         </Nav>
       </Navbar>
     </>

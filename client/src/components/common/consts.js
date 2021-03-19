@@ -1,6 +1,6 @@
 export const defaultHomePage = {
     receptionist: "/schedule",
     physician: "/schedule",
-    technician: "/schedule",
-    radiologist: "/schedule"
+    technician: "/worklist",
+    radiologist: "/worklist"
 }

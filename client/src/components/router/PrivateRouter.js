@@ -9,15 +9,14 @@ import Navigation from "../common/Navigation";
 import PageNotFound from "../common/PageNotFound";
 
 const PrivateRouter = ({ component: Component, ...rest }) => {
-  const authUser = () => {
-    return false;
-  };
+  const authUser = () => localStorage.getItem("userInfo");
 
   return authUser() ? (
-    <Route {...rest} component={Component} />
-  ) : authUser() && rest.path === "/*" ?
-    <PageNotFound />
-  :(
+    <>
+      <Navigation />
+      <Route {...rest} component={Component} />
+    </>
+  ) : (
     <Redirect to="/login" />
   );
 };
