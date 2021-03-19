@@ -1,29 +1,45 @@
-import React from 'react';
-import Accordion from './Accordion';
+import React, {useState, useEffect} from 'react';
+import "../assests/css/schedule.css";
 
-const Schedule = () => {
-  const accordionData = [
+function Schedule  () {
+  const [state, setState] = useState({})
+    useEffect(() => {
+        
+    }, [])
+ 
+  const appointmentData = [
     {
-      title: 'John Smith',
-      content: `PA-578548   Dr. Willam Barr    9:00 A.M.    01/01/20XX`
+      id: "PA-58726",
+      firstName: "John",
+      lastName: "Smith",
+      date: "01/01/20XX 10:00 a.m.",
+      physician: "Sheldon Williams"
+    },
+    
+    {
+      id: "PA-15973",
+      firstName: "Jane",
+      lastName: "Stevens",
+      date: "01/01/20XX 1:00 p.m.",
+      physician: "Jack Hilton"
     },
     {
-      title: 'Jane Doe',
-      content: `PA-789632   Dr. Harry Rosen    12:00 P.M.   01/01/20XX`
-    },
-    {
-      title: 'Jerry Trois',
-      content: `PA-963852   Dr. Elena Robins   1:00 P.M.    01/01/20XX`
+      id: "PA-58726",
+      firstName: "Dan",
+      lastName: "Johnson",
+      date: "01/01/20XX 3:00 p.m.",
+      physician: "Robert Stilton"
     }
-  ];
-
+  ]
+  const appointmentList = appointmentData.map(appointment => (
+    <ul>
+      <a href= "/patients/:id">{appointment.firstName} {appointment.lastName}</a> {appointment.date} {appointment.physician} 
+      <a href = "appointments/:id">edit</a> <a href = "/api/appointment/checkin/:id">Check-In</a> 
+    </ul>))
   return (
     <div>
-      <h1>Today's Schedule</h1>
-      <div className="accordion">
-        {accordionData.map(({ title, content }) => (
-          <Accordion title={title} content={content} />
-        ))}
+      <div className = "schedule">
+        {appointmentList}
       </div>
     </div>
   );

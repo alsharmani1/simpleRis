@@ -1,0 +1,12 @@
+schedule {
+    padding-top: 50px;
+}
+
+ul {
+    text-align: left;
+    font-size: 30px;
+    background-color:lightgrey;
+}
+button{
+    align-items: right;
+}
