@@ -3,7 +3,7 @@ import axios from "axios";
 import { Navbar, Nav, Form, Button, FormControl } from "react-bootstrap";
 
 const Navigation = () => {
-  const { name } = JSON.parse(localStorage.getItem("userInfo"));
+  const { name, userRole } = JSON.parse(localStorage.getItem("userInfo"));
 
   const logout = () => {
     axios
