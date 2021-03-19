@@ -1,19 +1,29 @@
 import React from "react";
-import {BrowserRouter as Router, Route, Switch} from 'react-router-dom'
 import Login from "./components/Login";
-import Schedule from "./components/schedule";
+import PrivateRouter from "./components/router/PrivateRouter";
+
+import {
+  BrowserRouter as Router,
+  Route,
+  Switch,
+  Redirect,
+} from "react-router-dom";
+import UserSearch from "./components/general/UserSearch";
+import PageNotFound from "./components/common/PageNotFound";
+import Schedule from "./components/schedule/Schedule"; 
 
 const App = (props) => {
-  return <Router>
-    <Switch>
-      {/* <Route exact path="/login" component="" /> */}
-      <Route exact path="/login" component={Login} />
-      { <Route exact path="/schedule" component={Schedule} />
-      /* <Route exact path="/" component="" />
-      <Route exact path="/" component="" />
-      <Route exact path="/" component="" /> */}
-    </Switch>
-  </Router>
-}
+  return (
+      <Router>
+        <Switch>
+          <Route exact path="/login" component={Login}/>
+          {/* <PrivateRouter exact path="/search" component={UserSearch} /> */}
+          <PrivateRouter exact path="/schedule" component={Schedule} />
+          <PrivateRouter exact path="/patients" component={UserSearch} />
+          <Route path="/*" component={PageNotFound} />
+        </Switch>
+      </Router>
+  );
+};
 
 export default App;
