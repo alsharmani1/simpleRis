@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Form, Button } from "react-bootstrap";
 import axios from "axios";
 import "../assests/css/login.css";
+import { defaultHomePage } from "./common/consts";
 
 const Login = (props) => {
   const [state, setState] = useState({
@@ -21,8 +22,9 @@ const Login = (props) => {
       .post("/api/login", state)
       .then((res) => {
         if (res.status === 200) {
+          localStorage.setItem("userInfo", JSON.stringify(res.data))
           setState((state) => ({ ...state, error: "" }));
-          window.location = "/";
+          window.location = defaultHomePage[res.data.userRole];
         } else {
           setState((state) => ({ ...state, error: res.data.message }));
         }
