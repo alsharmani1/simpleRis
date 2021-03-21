@@ -3,16 +3,7 @@ import React, { useState, useEffect } from "react";
 import { ListGroup, ListGroupItem } from "react-bootstrap";
 
 function Schedule() {
-  const [state, setState] = useState([
-    {
-      id: "",
-      firstName: "",
-      lastName: "",
-      date: "",
-      time: "",
-      physician: "",
-    },
-  ]);
+  const [state, setState] = useState([]);
 
   useEffect(() => {
     axios
