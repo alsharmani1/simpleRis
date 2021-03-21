@@ -5,13 +5,16 @@ import {
   Switch,
   Redirect,
 } from "react-router-dom";
+import { defaultHomePage } from "../common/consts";
 import Navigation from "../common/Navigation";
 import PageNotFound from "../common/PageNotFound";
 
 const PrivateRouter = ({ component: Component, ...rest }) => {
-  const authUser = () => localStorage.getItem("userInfo");
+  const authUser = () => JSON.parse(localStorage.getItem("userInfo")).userRole;
 
-  return authUser() ? (
+  return authUser() && rest.location.pathname === "/" ? (
+    (window.location = defaultHomePage[authUser()])
+  ) : authUser() ? (
     <>
       <Navigation />
       <Route {...rest} component={Component} />
