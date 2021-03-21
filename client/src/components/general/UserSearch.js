@@ -12,17 +12,17 @@ const UserSearch = (props) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // axios
-    //   .post("/api/patient/search", state)
-    //   .then((res) => {
-    //     const patients = res.data;
-    //     // save data to state if you don't know something ; console log it
-    //     setState((state) => ({ ...state, patients }));
-    //   })
-    //   .catch((error) => {
-    //     // console log the error or do something with it
-    //     console.log(error);
-    //   });
+    axios
+      .post("/api/patient/search", state)
+      .then((res) => {
+        const patients = res.data;
+        // save data to state if you don't know something ; console log it
+        setState((state) => ({ ...state }));
+      })
+      .catch((error) => {
+        // console log the error or do something with it
+        console.log(error);
+      });
 
     const patients = [
         {
@@ -45,7 +45,7 @@ const UserSearch = (props) => {
         }
     ]
 
-    setState((state) => ({ ...state,  patients }));
+    // setState((state) => ({ ...state,  patients }));
 
   };
 

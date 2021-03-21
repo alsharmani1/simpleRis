@@ -3,6 +3,7 @@ const bodyParser = require('body-parser')
 const express = require('express')
 const app = express()
 const userRoutes = require('./routes/userRoutes')
+const searchRoutes = require('./routes/searchRoutes')
 const path = require('path')
 const pool = require('./config/db')
 
@@ -16,6 +17,7 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 
 app.use(userRoutes)
+app.use(searchRoutes)
 
 app.listen(5000, () => {
     console.log("Running on port 5000")
