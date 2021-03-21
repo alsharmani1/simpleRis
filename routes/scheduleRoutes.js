@@ -3,10 +3,14 @@ const router = express.Router();
 const pool = require("../config/db");
 
 router.get("/api/schedule", (req, res) => {
-  let today = new Date().toISOString().slice(0, 10)
-  let formattedQuery = [`SELECT * FROM appointments WHERE date="${today}"`];
+  let today = new Date().toISOString().slice(0, 10);
+  let query = `
+    SELECT appointments.*, patients.firstName, patients.lastName 
+    FROM appointments INNER JOIN patients on appointments.patientId=patients.id 
+    WHERE appointments.date="${today}"
+    `;
 
-  pool.query(formattedQuery.join(" "), async (error, results, fields) => {
+  pool.query(query, async (error, results, fields) => {
     if (error) {
       console.log(error);
       res.status(400).send("Unable to retrieve schedule");
@@ -16,4 +20,3 @@ router.get("/api/schedule", (req, res) => {
 });
 
 module.exports = router;
-
