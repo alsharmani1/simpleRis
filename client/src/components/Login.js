@@ -40,11 +40,11 @@ const Login = (props) => {
       <h2 className="login-header text-center">Welcome to SimpleRIS</h2>
       <Form className="login-form-container">
         <Form.Group>
-          <Form.Label>Email address</Form.Label>
+          <Form.Label>Username</Form.Label>
           <Form.Control
             type="email"
             name="username"
-            placeholder="Enter email"
+            placeholder="Username"
             value={state.username}
             onChange={(e) => onChange(e)}
           />
