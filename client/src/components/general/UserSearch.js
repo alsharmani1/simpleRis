@@ -131,6 +131,18 @@ const UserSearch = (props) => {
           { name: "thumbnail", width: 300, height: 300 },
         ];
 
+        imageSizes.map((a) => {
+          const capitalizedName = a.name[0].toUpperCase() + a.name.slice(1);
+          return ${capitalizedName} image - ${a.width} x ${a.height};
+        });
+
+        const stringifyImageSizes = (imageSizes) => {
+          return imageSizes.map((a) => {
+            const capitalizedName = a.name[0].toUpperCase() + a.name.slice(1);
+            return ${capitalizedName} image - ${a.width} x ${a.height};
+          });
+        };
+
       </div>
     </div>
   );
