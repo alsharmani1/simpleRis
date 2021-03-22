@@ -17,34 +17,41 @@ function Schedule() {
   }, []);
 
   const deleteHandler = (e, id, index) => {
-    e.preventDefault()
-    axios.delete(`/api/appointment/delete/${id}`).then(res => {
-      setState(state => {
-        const removeItem = state.splice(index, 1)
-        return removeItem
+    e.preventDefault();
+    axios
+      .delete(`/api/appointment/delete/${id}`)
+      .then((res) => {
+        setState((state) => {
+          const removeItem = state.splice(index, 1);
+          return removeItem;
+        });
       })
-    }).catch(error => {
-      console.log(error)
-    })
-  }
-  
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   const checkInHandler = (e) => {
-    e.preventDefault()
-    axios.post("/api/appointment/checkin/:id").then((res) => {
-      setState((state) => ({ ...state, status: "Started" }));
-    })
-    .catch((err) => {
+    e.preventDefault();
+    axios
+      .post("/api/appointment/checkin/:id")
+      .then((res) => {
+        setState((state) => ({ ...state, status: "Started" }));
+      })
+      .catch((err) => {
         console.log(err);
-    });
+      });
   };
 
   const checkOutHandler = () => {
-    axios.post("/api/appointment/checkin/:id").then((res) => {
-      setState((state) => ({ ...state, status: "Finished" }));
-    })
-    .catch((err) => {
+    axios
+      .post("/api/appointment/checkin/:id")
+      .then((res) => {
+        setState((state) => ({ ...state, status: "Finished" }));
+      })
+      .catch((err) => {
         console.log(err);
-    });
+      });
   };
 
   const appointmentList = state.map((appointment, index) => (
@@ -55,9 +62,18 @@ function Schedule() {
       <ListGroupItem>{appointment.date}</ListGroupItem>
       <ListGroupItem>{appointment.physician}</ListGroupItem>
       <ListGroupItem>
-        <a> edit </a>
-        <a onClick={(e) => deleteHandler(e, appointment.id, index)}> Delete </a>
-        {appointment.status === "Not Started" ? (<a> check-in </a>) : (<a> check-out </a>)}
+        <a style={actionBtnStyle}> Edit </a>
+        <a
+          style={actionBtnStyle}
+          onClick={(e) => deleteHandler(e, appointment.id, index)}
+        >
+          Delete
+        </a>
+        {appointment.status === "Not Started" ? (
+          <a style={actionBtnStyle}> Check-in </a>
+        ) : (
+          <a style={actionBtnStyle}> Check-out </a>
+        )}
       </ListGroupItem>
     </ListGroup>
   ));
@@ -69,4 +85,8 @@ function Schedule() {
   );
 }
 
+const actionBtnStyle = {
+  cursor: "pointer",
+  color: "blue"
+};
 export default Schedule;
