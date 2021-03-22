@@ -35,13 +35,23 @@ const UserSearch = (props) => {
             phone: "54554545"
         },
         {
-            id: 1,
+            id: 2,
             dob: "08/10/1999",
             firstName: "Cedric",
             middleInitial: "A",
             insuranceNum: "5215151",
             lastName: "Baaklini",
             phone: "54554545"
+        },
+
+        {
+           id: 3,
+           dob: "04/20/1969",
+           firstName: "Doom",
+           middleInitial: "G",
+           insuranceNum: "66624601",
+           lastName: "Slayer",
+           phone: "6662493"
         }
     ]
 
@@ -115,6 +125,41 @@ const UserSearch = (props) => {
 
         {/* DISPLAY THE RESULTS WITH THE .map FUNCTION*/}
 
+        const imageSizes = [
+          { name: "horizontal", width: 600, height: 380 },
+          { name: "vertical", width: 400, height: 650 },
+          { name: "thumbnail", width: 300, height: 300 },
+        ];
+
+        imageSizes.map((a) => {
+          const capitalizedName = a.name[0].toUpperCase() + a.name.slice(1);
+          return ${capitalizedName} image - ${a.width} x ${a.height};
+        });
+
+        const stringifyImageSizes = (imageSizes) => {
+          return imageSizes.map((a) => {
+            const capitalizedName = a.name[0].toUpperCase() + a.name.slice(1);
+            return ${capitalizedName} image - ${a.width} x ${a.height};
+          });
+        };
+
+        const Images = () => {
+          const imageSizes = [
+            { name: "horizontal", width: 600, height: 380 },
+            { name: "vertical", width: 400, height: 650 },
+            { name: "thumbnail", width: 300, height: 300 },
+          ];
+
+          const normalizedImageStrings = stringifyImageSizes(imageSizes);
+
+          return (
+            <div className="images">
+            {normalizedImageStrings.map((s) => (
+              <div className="image-type">{s}</div>
+            ))}
+            </div>
+          );
+        };
 
       </div>
     </div>
