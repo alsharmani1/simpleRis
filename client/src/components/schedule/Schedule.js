@@ -62,17 +62,24 @@ function Schedule() {
       <ListGroupItem>{appointment.date}</ListGroupItem>
       <ListGroupItem>{appointment.physician}</ListGroupItem>
       <ListGroupItem>
-        <a style={actionBtnStyle}> Edit </a>
+        <a style={actionBtnStyle} className="mr-2">
+          Edit
+        </a>
         <a
           style={actionBtnStyle}
           onClick={(e) => deleteHandler(e, appointment.id, index)}
+          className="mr-2"
         >
           Delete
         </a>
         {appointment.status === "Not Started" ? (
-          <a style={actionBtnStyle}> Check-in </a>
+          <a style={actionBtnStyle} className="mr-2">
+            Check-in
+          </a>
         ) : (
-          <a style={actionBtnStyle}> Check-out </a>
+          <a style={actionBtnStyle} className="mr-2">
+            Check-out
+          </a>
         )}
       </ListGroupItem>
     </ListGroup>
@@ -80,13 +87,17 @@ function Schedule() {
 
   return (
     <div>
-      <div className="schedule">{appointmentList}</div>
+      {!state.length ? (
+        <h4 className="text-center mt-5" >There are no appointments for today!</h4>
+      ) : (
+        <div className="schedule">{appointmentList}</div>
+      )}
     </div>
   );
 }
 
 const actionBtnStyle = {
   cursor: "pointer",
-  color: "blue"
+  color: "blue",
 };
 export default Schedule;
