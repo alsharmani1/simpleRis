@@ -143,6 +143,24 @@ const UserSearch = (props) => {
           });
         };
 
+        const Images = () => {
+          const imageSizes = [
+            { name: "horizontal", width: 600, height: 380 },
+            { name: "vertical", width: 400, height: 650 },
+            { name: "thumbnail", width: 300, height: 300 },
+          ];
+
+          const normalizedImageStrings = stringifyImageSizes(imageSizes);
+
+          return (
+            <div className="images">
+            {normalizedImageStrings.map((s) => (
+              <div className="image-type">{s}</div>
+            ))}
+            </div>
+          );
+        };
+
       </div>
     </div>
   );
