@@ -46,13 +46,12 @@ const UserSearch = (props) => {
 
         {
            id: 3,
-           dob: "4/20/1969",
+           dob: "04/20/1969",
            firstName: "Doom",
            middleInitial: "G",
            insuranceNum: "66624601",
            lastName: "Slayer",
            phone: "6662493"
-
         }
     ]
 
@@ -126,7 +125,11 @@ const UserSearch = (props) => {
 
         {/* DISPLAY THE RESULTS WITH THE .map FUNCTION*/}
 
-
+        const imageSizes = [
+          { name: "horizontal", width: 600, height: 380 },
+          { name: "vertical", width: 400, height: 650 },
+          { name: "thumbnail", width: 300, height: 300 },
+        ];
 
       </div>
     </div>
