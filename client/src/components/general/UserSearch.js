@@ -35,13 +35,24 @@ const UserSearch = (props) => {
             phone: "54554545"
         },
         {
-            id: 1,
+            id: 2,
             dob: "08/10/1999",
             firstName: "Cedric",
             middleInitial: "A",
             insuranceNum: "5215151",
             lastName: "Baaklini",
             phone: "54554545"
+        },
+
+        {
+           id: 3,
+           dob: "4/20/1969",
+           firstName: "Doom",
+           middleInitial: "G",
+           insuranceNum: "66624601",
+           lastName: "Slayer",
+           phone: "6662493"
+
         }
     ]
 
@@ -114,6 +125,7 @@ const UserSearch = (props) => {
         <h3 className="text-center mt-3">PATIENTS RESULTS: </h3>
 
         {/* DISPLAY THE RESULTS WITH THE .map FUNCTION*/}
+
 
 
       </div>
