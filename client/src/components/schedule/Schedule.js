@@ -1,11 +1,15 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
-import { ListGroup, ListGroupItem } from "react-bootstrap";
+import { Table } from "react-bootstrap";
 
 function Schedule() {
   const [state, setState] = useState([]);
 
   useEffect(() => {
+    getSchedule();
+  }, []);
+
+  const getSchedule = () =>
     axios
       .get("/api/schedule")
       .then((res) => {
@@ -14,12 +18,16 @@ function Schedule() {
       .catch((err) => {
         console.log(err);
       });
-  }, []);
 
-  const deleteHandler = (e, id, index) => {
+  const editHandler = (e, appointmentId) => {
+    e.preventDefault();
+    window.location = `/appointments/${appointmentId}`;
+  };
+
+  const deleteHandler = (e, appointmentId, index) => {
     e.preventDefault();
     axios
-      .delete(`/api/appointment/delete/${id}`)
+      .delete(`/api/appointment/delete/${appointmentId}`)
       .then((res) => {
         setState((state) => {
           const removeItem = state.splice(index, 1);
@@ -31,73 +39,99 @@ function Schedule() {
       });
   };
 
-  const checkInHandler = (e) => {
+  const checkInOutHandler = (e, appointmentId, status) => {
     e.preventDefault();
     axios
-      .post("/api/appointment/checkin/:id")
+      .post(`/api/appointment/status/${appointmentId}`)
       .then((res) => {
-        setState((state) => ({ ...state, status: "Started" }));
+        getSchedule()
       })
       .catch((err) => {
         console.log(err);
       });
   };
 
-  const checkOutHandler = () => {
-    axios
-      .post("/api/appointment/checkin/:id")
-      .then((res) => {
-        setState((state) => ({ ...state, status: "Finished" }));
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
+  const AppointmentList = () =>
+    state.map((info, index) => {
+      const {
+        firstName,
+        lastName,
+        physician,
+        status,
+        time,
+        date,
+        appointmentId,
+        patientId,
+      } = info;
 
-  const appointmentList = state.map((appointment, index) => (
-    <ListGroup horizontal key={index}>
-      <ListGroupItem>
-        {appointment.firstName} {appointment.lastName}
-      </ListGroupItem>
-      <ListGroupItem>{appointment.date}</ListGroupItem>
-      <ListGroupItem>{appointment.physician}</ListGroupItem>
-      <ListGroupItem>
-        <a style={actionBtnStyle} className="mr-2">
-          Edit
-        </a>
-        <a
-          style={actionBtnStyle}
-          onClick={(e) => deleteHandler(e, appointment.id, index)}
-          className="mr-2"
-        >
-          Delete
-        </a>
-        {appointment.status === "Not Started" ? (
-          <a style={actionBtnStyle} className="mr-2">
-            Check-in
-          </a>
-        ) : (
-          <a style={actionBtnStyle} className="mr-2">
-            Check-out
-          </a>
-        )}
-      </ListGroupItem>
-    </ListGroup>
-  ));
+      const statusName = status === "Not Started" ? "Check-in" : "Check-out";
+      return (
+        <div key={index}>
+          <h4 className="text-center mt-5 mb-5">TODAY'S SCHEDULE</h4>
+          {state.length && (
+            <Table striped bordered hover>
+              <thead>
+                <tr>
+                  <th>Patient</th>
+                  <th>Date</th>
+                  <th>Time</th>
+                  <th>Physician</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <a
+                      href={`/patients/${patientId}`}
+                    >{`${firstName}, ${lastName}`}</a>
+                  </td>
+                  <td>{date}</td>
+                  <td>{time}</td>
+                  <td>{physician}</td>
+                  <td>
+                    <a
+                      href="#"
+                      className="mr-2"
+                      onClick={(e) => editHandler(e, appointmentId)}
+                    >
+                      Edit
+                    </a>
+                    <a
+                      href="#"
+                      className="mr-2"
+                      onClick={(e) => deleteHandler(e, appointmentId, index)}
+                    >
+                      Delete
+                    </a>
+                    <a
+                      href="#"
+                      onClick={(e) =>
+                        checkInOutHandler(e, appointmentId, statusName)
+                      }
+                    >
+                      {statusName}
+                    </a>
+                  </td>
+                </tr>
+              </tbody>
+            </Table>
+          )}
+        </div>
+      );
+    });
 
   return (
     <div>
       {!state.length ? (
-        <h4 className="text-center mt-5" >There are no appointments for today!</h4>
+        <h4 className="text-center mt-5">
+          There are no appointments for today!
+        </h4>
       ) : (
-        <div className="schedule">{appointmentList}</div>
+        <AppointmentList />
       )}
     </div>
   );
 }
 
-const actionBtnStyle = {
-  cursor: "pointer",
-  color: "blue",
-};
 export default Schedule;

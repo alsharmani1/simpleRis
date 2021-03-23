@@ -8,7 +8,7 @@ import {
   Switch,
   Redirect,
 } from "react-router-dom";
-import UserSearch from "./components/general/UserSearch";
+import UserSearch from "./components/search/UserSearch";
 import PageNotFound from "./components/common/PageNotFound";
 import Schedule from "./components/schedule/Schedule";
 
