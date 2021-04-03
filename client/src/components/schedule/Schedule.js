@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
-import { Table } from "react-bootstrap";
+import { Table, Button } from "react-bootstrap";
 
 function Schedule() {
   const [state, setState] = useState([]);
@@ -44,43 +44,43 @@ function Schedule() {
     axios
       .post(`/api/appointment/status/${appointmentId}`)
       .then((res) => {
-        getSchedule()
+        getSchedule();
       })
       .catch((err) => {
         console.log(err);
       });
   };
 
-  const AppointmentList = () =>
-    state.map((info, index) => {
-      const {
-        firstName,
-        lastName,
-        physician,
-        status,
-        time,
-        date,
-        appointmentId,
-        patientId,
-      } = info;
+  const AppointmentList = () => {
+    return <div>
+      {state.length && (
+        <Table striped bordered hover>
+          <thead>
+            <tr>
+              <th>Patient</th>
+              <th>Date</th>
+              <th>Time</th>
+              <th>Physician</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {state.map((info, index) => {
+              const {
+                firstName,
+                lastName,
+                physician,
+                status,
+                time,
+                date,
+                appointmentId,
+                patientId,
+              } = info;
 
-      const statusName = status === "Not Started" ? "Check-in" : "Check-out";
-      return (
-        <div key={index}>
-          <h4 className="text-center mt-5 mb-5">TODAY'S SCHEDULE</h4>
-          {state.length && (
-            <Table striped bordered hover>
-              <thead>
-                <tr>
-                  <th>Patient</th>
-                  <th>Date</th>
-                  <th>Time</th>
-                  <th>Physician</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
+              const statusName =
+                status === "Not Started" ? "Check-in" : "Check-out";
+              return (
+                <tr key={index}>
                   <td>
                     <a
                       href={`/patients/${patientId}`}
@@ -114,12 +114,13 @@ function Schedule() {
                     </a>
                   </td>
                 </tr>
-              </tbody>
-            </Table>
-          )}
-        </div>
-      );
-    });
+              );
+            })}
+          </tbody>
+        </Table>
+      )}
+    </div>;
+  };
 
   return (
     <div>
@@ -128,7 +129,10 @@ function Schedule() {
           There are no appointments for today!
         </h4>
       ) : (
-        <AppointmentList />
+        <>
+          <h4 className="text-center mt-5 mb-5">TODAY'S SCHEDULE</h4>
+          <AppointmentList />
+        </>
       )}
     </div>
   );

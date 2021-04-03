@@ -1,8 +1,17 @@
 .document {
-    max-width: 980px !important;
-    margin: 0 auto
+  max-width: 980px !important;
+  margin: 0 auto;
 }
 
 .text-center {
-    text-align: center;
+  text-align: center;
+}
+
+.anchor-link {
+  color: #007bff;
+}
+
+.anchor-link:hover {
+  text-decoration: underline;
+  cursor: pointer;
 }
