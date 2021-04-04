@@ -13,6 +13,7 @@ import PageNotFound from "./components/common/PageNotFound";
 import Schedule from "./components/schedule/Schedule";
 import NewAppointment from "./components/schedule/NewAppointment";
 import PatientProfile from "./components/patients/PatientProfile";
+import AppointmentDetails from "./components/patients/VisitHistory";
 
 const App = (props) => {
   return (
@@ -21,6 +22,7 @@ const App = (props) => {
         <Switch>
           <Route exact path="/login" component={Login}/>
           <PrivateRouter exact path="/appointments" component={Schedule} />
+          <PrivateRouter exact path="/appointments/:id" component={AppointmentDetails} />
           <PrivateRouter exact path="/appointments/new" component={NewAppointment} />
           <PrivateRouter exact path="/patients" component={PatientSearch} />
           <PrivateRouter exact path="/patients/:id" component={PatientProfile} />

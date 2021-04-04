@@ -13,6 +13,18 @@ const getCurrentDateTimeMySql = () => {
   return mySqlDT;
 };
 
+router.get("/api/physicians", (req, res) => {
+  let query = `SELECT * FROM physicians`;
+
+  pool.query(query, async (error, results, fields) => {
+    if (error) {
+      console.log(error);
+      res.status(400).send("Unable to retrieve list of physicians");
+    }
+    res.status(200).send(results);
+  });
+});
+
 router.get("/api/schedule", (req, res) => {
   const today = getCurrentDateTimeMySql().split(" ")[0];
   let query = `
@@ -20,7 +32,7 @@ router.get("/api/schedule", (req, res) => {
     FROM appointments INNER JOIN patients on appointments.patientId=patients.id 
     WHERE appointments.date="${today}"
     `;
-  console.log(today);
+
   pool.query(query, async (error, results, fields) => {
     if (error) {
       console.log(error);
@@ -38,11 +50,58 @@ router.post("/api/appointment/create", (req, res) => {
 
   pool.query(query, async (error, results, fields) => {
     if (error) {
-      console.log(error);
       res.status(400).send("Unable to retrieve schedule");
     }
-    res.status(200).send(results);
+    res.status(200).send("Appointment created successfully!");
   });
 });
 
+// UPDATE APPOINTMENT 
+router.post("/api/appointment/update", (req, res) => {
+  let query = "UPDATE appointments SET";
+  const dataKeys = Object.keys(req.body);
+  const formatQuery = dataKeys.map((key, index) => {
+    if (index !== 0 && index !== dataKeys.length - 1)
+      return `${key}="${req.body[key]}",`;
+    if (index === dataKeys.length - 1) return `${key}="${req.body[key]}"`;
+  });
+
+  query = `${query} ${formatQuery.join(" ")} WHERE appointmentId="${req.body.appointmentId}"`;
+
+  console.log(query);
+  pool.query(query, async (error, results, fields) => {
+    if (error) {
+      console.log(error);
+      res
+        .status(400)
+        .json({ message: "Unable to save appointment.", status: 400 });
+    }
+    res.status(200).send("Saved appointment info!");
+  });
+});
+
+router.post("/api/appointment/status/:id", (req, res) => {
+  const status = req.body.status === "Check-in" ? "Pending" : "Complete";
+  let query = `UPDATE appointments SET status="${status}" WHERE appointmentId="${req.params.id}"`;
+
+  pool.query(query, async (error, results, fields) => {
+    if (error) {
+      console.log(error);
+      res.status(400).send("Unable to save appointment status");
+    }
+    res.status(200).send("Saved status successfully!");
+  });
+});
+
+router.delete("/api/appointment/delete/:id", (req, res) => {
+  let query = `DELETE FROM appointments WHERE appointmentId="${req.params.id}"`;
+
+  pool.query(query, async (error, results, fields) => {
+    if (error) {
+      console.log(error);
+      res.status(400).send("Unable to delete appointment");
+    }
+    res.status(200).send("Appointment deleted successfully!");
+  });
+});
 module.exports = router;

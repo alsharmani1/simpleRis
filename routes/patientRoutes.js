@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const pool = require("../config/db");
 
+//CREATE PATIENT
 router.post("/api/patient/create", (req, res) => {
   const {
     firstName,
@@ -20,13 +21,15 @@ router.post("/api/patient/create", (req, res) => {
   pool.query(createPatientQuery, async (error, results, fields) => {
     if (error) {
       console.log(error);
-      res.status(400).json({ message: "Unable to create new patient", status: 400 });
+      res
+        .status(400)
+        .json({ message: "Unable to create new patient", status: 400 });
     }
     res.status(200).send(results);
   });
 });
 
-
+//GET PATIENT INFO
 router.get("/api/patients/:id", (req, res) => {
   const createPatientQuery = `
   SELECT * FROM patients where id="${req.params.id}";
@@ -35,9 +38,35 @@ router.get("/api/patients/:id", (req, res) => {
   pool.query(createPatientQuery, async (error, results, fields) => {
     if (error) {
       console.log(error);
-      res.status(400).json({ message: "Unable to get patient info", status: 400 });
+      res
+        .status(400)
+        .json({ message: "Unable to get patient info", status: 400 });
     }
     res.status(200).send(results);
+  });
+});
+
+// UPDATE PATIENT INFO
+router.post("/api/patients/update", (req, res) => {
+  let query = "UPDATE patients SET";
+  const dataKeys = Object.keys(req.body);
+  const formatQuery = dataKeys.map((key, index) => {
+    if (index !== 0 && index !== dataKeys.length - 1)
+      return `${key}="${req.body[key]}",`;
+    if (index === dataKeys.length - 1) return `${key}="${req.body[key]}"`;
+  });
+
+  query = `${query} ${formatQuery.join(" ")} WHERE id="${req.body.id}"`;
+
+  console.log(query);
+  pool.query(query, async (error, results, fields) => {
+    if (error) {
+      console.log(error);
+      res
+        .status(400)
+        .json({ message: "Unable to save patient info", status: 400 });
+    }
+    res.status(200).send("Saved patient info!");
   });
 });
 module.exports = router;

@@ -1,23 +1,92 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
-import { Form, Button, Row } from "react-bootstrap";
+import { Form, Button, Modal, Col } from "react-bootstrap";
 
-const NewAppointment = () => {
-  const [state, setState] = useState({});
+const NewAppointment = (props) => {
+  const [state, setState] = useState({
+    appointmentId:
+      props?.appointmentInfo.appointmentId ||
+      `A-${Math.floor(100000 + Math.random() * 900000)}`,
+    status: "Not Started",
+    date: props?.appointmentInfo.date || "",
+    time: props?.appointmentInfo.time || "",
+    physician: props?.appointmentInfo.physician || ""
+  });
 
-  const onSubmit = () => {
-    axios
-      .post("/api/appointment/create", state)
-      .then((res) => {})
-      .catch((error) => console.log(error));
-  };
+  const [physicians, setPhysicians] = useState([]);
+  useEffect(() => {
+    axios.get("/api/physicians").then((res) => {
+      setPhysicians((state) => res.data);
+    });
+  }, []);
+
+  const onChange = (e) =>
+    setState((state) => ({
+      ...state,
+      [e.target.name]: e.target.value,
+    }));
+
   return (
-    <div>
-      <Form>
-        {/* <Form.Row */}
-        <Button varient="primary">Create Appointment</Button>
-      </Form>
-    </div>
+    <Modal show={props.showModal}>
+      <Modal.Header>
+        <Modal.Title>Create Appointment</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Form>
+          <Form.Row>
+            <Form.Group as={Col}>
+              <Form.Label>Date</Form.Label>
+              <Form.Control
+                name="date"
+                type="date"
+                onChange={(e) => onChange(e)}
+                value={state["date"]}
+              />
+            </Form.Group>
+            <Form.Group as={Col}>
+              <Form.Label>Date</Form.Label>
+              <Form.Control
+                name="time"
+                type="time"
+                onChange={(e) => onChange(e)}
+                value={state["time"]}
+              />
+            </Form.Group>
+            <Form.Group as={Col} controlId="formGridState">
+              <Form.Label>Physican</Form.Label>
+              <Form.Control
+                as="select"
+                name="physician"
+                onChange={(e) => onChange(e)}
+                defaultValue="Select..."
+              >
+                <option>Select...</option>
+                {physicians.map(({ lastName, firstName, role }, index) => (
+                  <option
+                    key={index}
+                    value={`${lastName}, ${firstName} ${role}`}
+                  >{`${lastName}, ${firstName} ${role}`}</option>
+                ))}
+              </Form.Control>
+            </Form.Group>
+          </Form.Row>
+        </Form>
+      </Modal.Body>
+      <Modal.Footer>
+        <Button
+          variant="secondary"
+          onClick={() => {
+            setState({});
+            props.toggleModal();
+          }}
+        >
+          Close
+        </Button>
+        <Button variant="primary" onClick={(e) => props.saveAppointment(state)}>
+          Save Appointment
+        </Button>
+      </Modal.Footer>
+    </Modal>
   );
 };
 

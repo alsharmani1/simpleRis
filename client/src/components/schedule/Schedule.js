@@ -1,9 +1,16 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { Table, Button } from "react-bootstrap";
+import { useToasts } from "react-toast-notifications";
+import NewAppointment from "./NewAppointment";
 
 function Schedule() {
+  const { addToast } = useToasts();
   const [state, setState] = useState([]);
+  const [modalState, setModalState] = useState({
+    showModal: false,
+    appointmentId: "",
+  });
 
   useEffect(() => {
     getSchedule();
@@ -19,30 +26,33 @@ function Schedule() {
         console.log(err);
       });
 
-  const editHandler = (e, appointmentId) => {
-    e.preventDefault();
-    window.location = `/appointments/${appointmentId}`;
-  };
-
   const deleteHandler = (e, appointmentId, index) => {
     e.preventDefault();
     axios
       .delete(`/api/appointment/delete/${appointmentId}`)
       .then((res) => {
+        addToast(res.data, {
+          appearance: "success",
+          autoDismiss: true,
+        });
         setState((state) => {
-          const removeItem = state.splice(index, 1);
-          return removeItem;
+          let list = [...state];
+          list.splice(index, 1);
+          return list;
         });
       })
       .catch((error) => {
-        console.log(error);
+        addToast(error.response.data, {
+          appearance: "error",
+          autoDismiss: true,
+        });
       });
   };
 
   const checkInOutHandler = (e, appointmentId, status) => {
     e.preventDefault();
     axios
-      .post(`/api/appointment/status/${appointmentId}`)
+      .post(`/api/appointment/status/${appointmentId}`, { status })
       .then((res) => {
         getSchedule();
       })
@@ -51,75 +61,109 @@ function Schedule() {
       });
   };
 
-  const AppointmentList = () => {
-    return <div>
-      {state.length && (
-        <Table striped bordered hover>
-          <thead>
-            <tr>
-              <th>Patient</th>
-              <th>Date</th>
-              <th>Time</th>
-              <th>Physician</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {state.map((info, index) => {
-              const {
-                firstName,
-                lastName,
-                physician,
-                status,
-                time,
-                date,
-                appointmentId,
-                patientId,
-              } = info;
+  const toggleModal = (appointmentInfo) =>
+    setModalState((state) => ({
+      ...state,
+      showModal: !state.showModal,
+      appointmentInfo,
+    }));
 
-              const statusName =
-                status === "Not Started" ? "Check-in" : "Check-out";
-              return (
-                <tr key={index}>
-                  <td>
-                    <a
-                      href={`/patients/${patientId}`}
-                    >{`${firstName}, ${lastName}`}</a>
-                  </td>
-                  <td>{date}</td>
-                  <td>{time}</td>
-                  <td>{physician}</td>
-                  <td>
-                    <a
-                      href="#"
-                      className="mr-2"
-                      onClick={(e) => editHandler(e, appointmentId)}
-                    >
-                      Edit
-                    </a>
-                    <a
-                      href="#"
-                      className="mr-2"
-                      onClick={(e) => deleteHandler(e, appointmentId, index)}
-                    >
-                      Delete
-                    </a>
-                    <a
-                      href="#"
-                      onClick={(e) =>
-                        checkInOutHandler(e, appointmentId, statusName)
-                      }
-                    >
-                      {statusName}
-                    </a>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </Table>
-      )}
-    </div>;
+  const saveAppointment = (appointmentState) => {
+    axios
+      .post("/api/appointment/update", appointmentState)
+      .then((res) => {
+        setModalState((state) => ({ ...state, showModal: false }));
+        addToast(res.data, {
+          appearance: "success",
+          autoDismiss: true,
+        });
+        getSchedule()
+      })
+      .catch((error) =>
+        addToast("Unable to save patient info", {
+          appearance: "error",
+          autoDismiss: true,
+        })
+      );
+  };
+
+  const AppointmentList = () => {
+    return (
+      <div>
+        {state.length && (
+          <Table striped bordered hover>
+            <thead>
+              <tr>
+                <th>Patient</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Physician</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {state.map((info, index) => {
+                const {
+                  firstName,
+                  lastName,
+                  physician,
+                  status,
+                  time,
+                  date,
+                  appointmentId,
+                  patientId,
+                } = info;
+
+                const statusName =
+                  status === "Not Started" ? "Check-in" : "Check-out";
+                return (
+                  status !== "Complete" && (
+                    <tr key={index}>
+                      <td>
+                        <a
+                          href={`/appointments/${appointmentId}`}
+                        >{`${firstName}, ${lastName}`}</a>
+                      </td>
+                      <td>{date}</td>
+                      <td>{time}</td>
+                      <td>{physician}</td>
+                      <td>
+                        <a
+                          href="#"
+                          className="mr-2"
+                          onClick={(e) => {
+                            toggleModal(info);
+                          }}
+                        >
+                          Edit
+                        </a>
+                        <a
+                          href="#"
+                          className="mr-2"
+                          onClick={(e) =>
+                            deleteHandler(e, appointmentId, index)
+                          }
+                        >
+                          Delete
+                        </a>
+                        <a
+                          href="#"
+                          onClick={(e) =>
+                            checkInOutHandler(e, appointmentId, statusName)
+                          }
+                        >
+                          {statusName}
+                        </a>
+                      </td>
+                    </tr>
+                  )
+                );
+              })}
+            </tbody>
+          </Table>
+        )}
+      </div>
+    );
   };
 
   return (
@@ -132,6 +176,14 @@ function Schedule() {
         <>
           <h4 className="text-center mt-5 mb-5">TODAY'S SCHEDULE</h4>
           <AppointmentList />
+          {modalState.showModal && (
+            <NewAppointment
+              showModal={modalState.showModal}
+              toggleModal={toggleModal}
+              appointmentInfo={modalState.appointmentInfo}
+              saveAppointment={saveAppointment}
+            />
+          )}
         </>
       )}
     </div>
