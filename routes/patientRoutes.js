@@ -42,7 +42,7 @@ router.get("/api/patients/:id", (req, res) => {
         .status(400)
         .json({ message: "Unable to get patient info", status: 400 });
     }
-    res.status(200).send(results);
+    res.status(200).send(results[0]);
   });
 });
 

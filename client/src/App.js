@@ -13,7 +13,7 @@ import PageNotFound from "./components/common/PageNotFound";
 import Schedule from "./components/schedule/Schedule";
 import NewAppointment from "./components/schedule/NewAppointment";
 import PatientProfile from "./components/patients/PatientProfile";
-import AppointmentDetails from "./components/patients/VisitHistory";
+import AppointmentDetails from "./components/schedule/AppointmentDetails";
 
 const App = (props) => {
   return (

@@ -25,6 +25,7 @@ router.get("/api/physicians", (req, res) => {
   });
 });
 
+//GET ALL APPOINTMENTS
 router.get("/api/schedule", (req, res) => {
   const today = getCurrentDateTimeMySql().split(" ")[0];
   let query = `
@@ -39,6 +40,21 @@ router.get("/api/schedule", (req, res) => {
       res.status(400).send("Unable to retrieve schedule");
     }
     res.status(200).send(results);
+  });
+});
+
+//GET ONE APPOINTMENTS
+router.get("/api/appointment/:appointmentId", (req, res) => {
+  let query = `
+    SELECT * FROM appointments WHERE appointmentId="${req.params.appointmentId}"
+    `;
+
+  pool.query(query, async (error, results, fields) => {
+    if (error) {
+      console.log(error);
+      res.status(400).send("Unable to retrieve appointment");
+    }
+    res.status(200).send(results[0]);
   });
 });
 

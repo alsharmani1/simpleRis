@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react'
 
-const AppointmentDetails = (props) => {
+const VisitHistory = (props) => {
     const patient = props.patientInfo
 
     return (
@@ -10,4 +10,4 @@ const AppointmentDetails = (props) => {
     )
 }
 
-export default AppointmentDetails
+export default VisitHistory

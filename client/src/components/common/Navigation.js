@@ -23,14 +23,14 @@ const Navigation = () => {
   return (
     <>
       <Navbar bg="dark" variant="dark">
-        <Navbar.Brand href="#" onClick={() => redirectToHomePage()}>
+        <Navbar.Brand onClick={() => redirectToHomePage()}>
           SimpleRIS
         </Navbar.Brand>
         <Nav className="mr-auto">
           <Nav.Link href="/appointments">Schedule</Nav.Link>
           <Nav.Link href="/patients">Patients</Nav.Link>
         </Nav>
-        <Nav inline>
+        <Nav inline="true">
           <div style={{ margin: "7px 8px 0", color: "white" }}>
             Welcome {name}!
           </div>

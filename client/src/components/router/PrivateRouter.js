@@ -10,7 +10,7 @@ import Navigation from "../common/Navigation";
 import PageNotFound from "../common/PageNotFound";
 
 const PrivateRouter = ({ component: Component, ...rest }) => {
-  const authUser = () => JSON.parse(localStorage.getItem("userInfo")).userRole;
+  const authUser = () => JSON.parse(localStorage.getItem("userInfo"))?.userRole;
 
   return authUser() && rest.location.pathname === "/" ? (
     (window.location = defaultHomePage[authUser()])
