@@ -8,7 +8,9 @@ const AppointmentDetails = (props) => {
   const { addToast } = useToasts();
   const [state, setState] = useState({
     patient: {},
-    formValues: { createReferral: "No" },
+    appointment: {},
+    createReferral: "No",
+    formValues: {},
   });
   useEffect(() => {
     getAppointmentAndPatient();
@@ -38,12 +40,17 @@ const AppointmentDetails = (props) => {
     e.preventDefault();
     setState((state) => {
       let saveState = { ...state };
-      saveState.formValues[e.target.name] = e.target.value;
-
-      if (e.target.name === "createReferral" && e.target.value === "No") {
-        delete saveState.formValues["scanType"];
-        delete saveState.formValues["scanArea"];
+      
+      if(e.target.name === "createReferral") {
+        saveState[e.target.name] = e.target.value;
+        if (e.target.value === "No") {
+          delete saveState.formValues["scanType"];
+          delete saveState.formValues["scanArea"];
+        }
+      } else {
+        saveState.formValues[e.target.name] = e.target.value;
       }
+
       return saveState;
     });
   };
@@ -112,10 +119,10 @@ const AppointmentDetails = (props) => {
       </>
     );
   };
-  const refOptionSize = state.formValues.createReferral === "Yes" ? 12 : 4;
+  const refOptionSize = state.createReferral === "Yes" ? 12 : 4;
   return (
     <div style={{margin: "0 auto", maxWidth: "85%"}}>
-      <h4 className="text-center mt-5">Appointment {state.appointment.appointmentId}</h4>
+      <h4 className="text-center mt-5">Appointment {state.appointment?.appointmentId}</h4>
       <div className="mt-5 doctor-notes">{extractAppointmentInfo()}</div>
       <div className="mt-5 patient-info">
         <Form>
@@ -127,14 +134,14 @@ const AppointmentDetails = (props) => {
                 className={`col-lg-${refOptionSize} col-md-${refOptionSize} col-sm-${refOptionSize}`}
                 name="createReferral"
                 onChange={onChange}
-                value={state.formValues.createReferral}
+                value={state.createReferral}
               >
                 <option value="Yes">Yes</option>
                 <option value="No">No</option>
               </Form.Control>
             </Form.Group>
 
-            {state.formValues.createReferral !== "No" && (
+            {state.createReferral !== "No" && (
               <>
                 <Form.Group as={Col}>
                   <Form.Label>Scan Type</Form.Label>

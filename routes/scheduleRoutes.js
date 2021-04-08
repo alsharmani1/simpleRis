@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const pool = require("../config/db");
-const { converTime } = require("../helpers/helpers");
 
 const getCurrentDateTimeMySql = () => {
   var tzoffset = new Date().getTimezoneOffset() * 60000; //offset in milliseconds
