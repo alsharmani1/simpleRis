@@ -15,7 +15,7 @@ const NewAppointment = (props) => {
 
   const [physicians, setPhysicians] = useState([]);
   useEffect(() => {
-    axios.get("/api/physicians").then((res) => {
+    axios.get(`/api/users/MD`).then((res) => {
       setPhysicians((state) => res.data);
     });
   }, []);
@@ -61,11 +61,11 @@ const NewAppointment = (props) => {
                 defaultValue="Select..."
               >
                 <option>Select...</option>
-                {physicians.map(({ lastName, firstName, role }, index) => (
+                {physicians.map(({ lastName, firstName, userRole }, index) => (
                   <option
                     key={index}
-                    value={`${lastName}, ${firstName} ${role}`}
-                  >{`${lastName}, ${firstName} ${role}`}</option>
+                    value={`${lastName}, ${firstName} ${userRole}`}
+                  >{`${lastName}, ${firstName} ${userRole}`}</option>
                 ))}
               </Form.Control>
             </Form.Group>

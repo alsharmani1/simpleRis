@@ -12,20 +12,9 @@ const getCurrentDateTimeMySql = () => {
   return mySqlDT;
 };
 
-router.get("/api/physicians", (req, res) => {
-  let query = `SELECT * FROM physicians`;
-
-  pool.query(query, async (error, results, fields) => {
-    if (error) {
-      console.log(error);
-      res.status(400).send("Unable to retrieve list of physicians");
-    }
-    res.status(200).send(results);
-  });
-});
-
 //GET ALL APPOINTMENTS
-router.get("/api/schedule", (req, res) => {
+router.get("/api/schedule/:userRole/:physicianId", (req, res) => {
+  
   const today = getCurrentDateTimeMySql().split(" ")[0];
   let query = `
     SELECT appointments.*, patients.firstName, patients.lastName 
@@ -33,6 +22,7 @@ router.get("/api/schedule", (req, res) => {
     WHERE appointments.date="${today}"
     `;
 
+  query = req.params.userRole !== "none" ? query + ` AND appointments.status="Pending" AND appointments.physicianId="${req.params.physicianId}"` : query
   pool.query(query, async (error, results, fields) => {
     if (error) {
       console.log(error);

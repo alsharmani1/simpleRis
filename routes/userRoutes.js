@@ -15,7 +15,7 @@ router.post("/api/login", (req, res) => {
 
   pool.query(userExistsQuery, async (error, results, fields) => {
     if (error) console.log(error);
-    const { password, firstName, userRole } = results[0];
+    const { password, firstName, userRole, id } = results[0];
 
     try {
       const hashedPassword = await compare(reqPassword, results[0].password);
@@ -23,7 +23,7 @@ router.post("/api/login", (req, res) => {
         res
           .cookie("auth", "User authorized", { maxAge: 60 * 60 * 8 })
           .status(200)
-          .json({ name: firstName, userRole });
+          .json({ name: firstName, userRole, userId: id});
       } else {
         res
           .status(401)
@@ -78,6 +78,19 @@ router.post("/api/users/create", hash, (req, res) => {
         res.status(409).json({ message: "User already exists", status: 409 });
       }
     });
+  });
+});
+
+//GET Specific User
+router.get("/api/users/:userRole", (req, res) => {
+  let query = `SELECT * FROM users WHERE userRole="${req.params.userRole}"`;
+
+  pool.query(query, async (error, results, fields) => {
+    if (error) {
+      console.log(error);
+      res.status(400).send("Unable to retrieve specified users");
+    }
+    res.status(200).send(results);
   });
 });
 

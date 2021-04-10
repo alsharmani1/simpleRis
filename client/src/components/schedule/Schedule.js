@@ -4,27 +4,46 @@ import { Table, Button } from "react-bootstrap";
 import { useToasts } from "react-toast-notifications";
 import NewAppointment from "./NewAppointment";
 
+export const convertHr24To12 = (hour, minute) => {
+  const hr = ((parseInt(hour) + 11) % 12 + 1)
+  const suffix = parseInt(hour) >= 12 ? "PM":"AM"; 
+  return `${hr}:${minute} ${suffix}`
+}
+
 function Schedule() {
+  const { userRole, userId } = JSON.parse(localStorage.getItem("userInfo"));
   const { addToast } = useToasts();
   const [state, setState] = useState([]);
   const [modalState, setModalState] = useState({
     showModal: false,
     appointmentId: "",
   });
-
+  
   useEffect(() => {
     getSchedule();
   }, []);
 
-  const getSchedule = () =>
+  const getUserParamsForAppointmentList = ({ userRole, userId }) => {
+    const userParamsList = {
+      MD: `/MD/${userId}`,
+      RT: `/RT/${userId}`,
+      technician: `/technician/${userId}`,
+    };
+    return userParamsList[userRole] || "/none/none";
+  };
+
+  const getSchedule = () => {
     axios
-      .get("/api/schedule")
+      .get(
+        `/api/schedule${getUserParamsForAppointmentList({ userRole, userId })}`
+      )
       .then((res) => {
         setState(res.data);
       })
       .catch((err) => {
         console.log(err);
       });
+  };
 
   const deleteHandler = (e, appointmentId, index) => {
     e.preventDefault();
@@ -77,7 +96,7 @@ function Schedule() {
           appearance: "success",
           autoDismiss: true,
         });
-        getSchedule()
+        getSchedule();
       })
       .catch((error) =>
         addToast("Unable to save patient info", {
@@ -114,6 +133,7 @@ function Schedule() {
                   patientId,
                 } = info;
 
+                const hm = time.split(":")
                 const statusName =
                   status === "Not Started" ? "Check-in" : "Check-out";
                 return (
@@ -122,10 +142,10 @@ function Schedule() {
                       <td>
                         <a
                           href={`/appointments/${appointmentId}`}
-                        >{`${firstName}, ${lastName}`}</a>
+                        >{`${lastName}, ${firstName}`}</a>
                       </td>
                       <td>{date}</td>
-                      <td>{time}</td>
+                      <td>{convertHr24To12(hm[0], hm[1])}</td>
                       <td>{physician}</td>
                       <td>
                         <a
