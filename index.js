@@ -6,6 +6,7 @@ const userRoutes = require('./routes/userRoutes')
 const searchRoutes = require('./routes/searchRoutes')
 const scheduleRoutes = require('./routes/scheduleRoutes')
 const patientRoutes = require('./routes/patientRoutes')
+const DevRoutes = require('./routes/DevRoutes')
 const path = require('path')
 const pool = require('./config/db')
 
@@ -22,6 +23,7 @@ app.use(userRoutes)
 app.use(searchRoutes)
 app.use(scheduleRoutes)
 app.use(patientRoutes)
+app.use(DevRoutes)
 
 app.listen(5000, () => {
     console.log("Running on port 5000")

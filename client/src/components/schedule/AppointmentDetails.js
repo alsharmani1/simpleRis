@@ -55,7 +55,26 @@ const AppointmentDetails = (props) => {
     });
   };
 
-  const handleSubmit = () => {};
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    axios
+      .post(
+        `/api/appointment/diagnosis/${state.appointment.appointmentId}`,
+        state.appointment
+      )
+      .then((res) =>
+        addToast("Saved successfully!", {
+          appearance: "success",
+          autoDismiss: true,
+        })
+      )
+      .catch((error) =>
+        addToast(error.response.data, {
+          appearance: "error",
+          autoDismiss: true,
+        })
+      );
+  };
   const extractAppointmentInfo = () => {
     const {
       firstName,
@@ -70,19 +89,15 @@ const AppointmentDetails = (props) => {
       zip,
     } = state.patient;
 
-    const {
-      physician,
-      date,
-      time,
-      status
-    } = state.appointment;
+    const { physician, date, time, status } = state.appointment;
 
     return (
       <>
         <Row>
           <Col>
             <p>
-              <b>Patient Name:</b> {`${firstName}, ${middleInitial} ${lastName}`}
+              <b>Patient Name:</b>{" "}
+              {`${firstName}, ${middleInitial} ${lastName}`}
             </p>
             <p>
               <b>DOB:</b> {dob}
@@ -90,19 +105,29 @@ const AppointmentDetails = (props) => {
             <p>
               <b>Insurance #:</b> {insuranceNum}
             </p>
-            <p><b>Phone #:</b> {phone}</p>
+            <p>
+              <b>Phone #:</b> {phone}
+            </p>
           </Col>
           <Col>
-            <p><b>Street Name:</b> {address}</p>
-            <p><b>City:</b> {city}</p>
-            <p><b>State:</b> {theState}</p>
-            <p><b>Zip:</b> {zip}</p>
+            <p>
+              <b>Street Name:</b> {address}
+            </p>
+            <p>
+              <b>City:</b> {city}
+            </p>
+            <p>
+              <b>State:</b> {theState}
+            </p>
+            <p>
+              <b>Zip:</b> {zip}
+            </p>
           </Col>
         </Row>
-      
+
         <Row className="mt-3">
           <Col>
-          <p>
+            <p>
               <b>Date:</b> {date}
             </p>
             <p>
@@ -110,10 +135,12 @@ const AppointmentDetails = (props) => {
             </p>
           </Col>
           <Col>
-          <p>
+            <p>
               <b>Time:</b> {time}
             </p>
-            <p><b>Physician:</b> {physician}</p>
+            <p>
+              <b>Physician:</b> {physician}
+            </p>
           </Col>
         </Row>
       </>
@@ -177,7 +204,7 @@ const AppointmentDetails = (props) => {
           <Button
             variant="primary"
             type="submit"
-            onClick={() => handleSubmit()}
+            onClick={(e) => handleSubmit(e)}
           >
             Save
           </Button>
