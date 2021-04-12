@@ -1,8 +1,8 @@
 export const defaultHomePage = {
     receptionist: "/appointments",
-    physician: "/appointments",
+    MD: "/appointments",
     technician: "/worklist",
-    radiologist: "/worklist"
+    RT: "/worklist"
 }
 
 export const scanTypes = ["X-Ray", "CT SCAN", "MRI", "Ultrasound", "PET Scan"]

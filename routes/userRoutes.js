@@ -8,33 +8,43 @@ router.get("/api/logout", (req, res) => {
 });
 
 router.post("/api/login", (req, res) => {
-  const { username, password: reqPassword, userRole } = req.body;
+  const { id, username, password: reqPassword, userRole } = req.body;
   const userExistsQuery = `
   SELECT * FROM users WHERE username="${username}"
 `;
 
   pool.query(userExistsQuery, async (error, results, fields) => {
     if (error) console.log(error);
-    const { password, firstName, userRole, id } = results[0];
+    const { password, username, firstName, userRole, id } = results[0];
 
     try {
       const hashedPassword = await compare(reqPassword, results[0].password);
       if (hashedPassword) {
         res
-          .cookie("auth", "User authorized", { maxAge: 60 * 60 * 8 })
+          .cookie("auth", username, { maxAge: 60 * 60 * 8 })
           .status(200)
-          .json({ name: firstName, userRole, userId: id});
+          .json({ name: firstName, userRole, userId: id, username });
       } else {
-        res
-          .status(401)
-          .json({ message: "Username or password is wrong", status: 401 });
+        res.status(401).send("Username or password is wrong");
       }
     } catch (error) {
       console.log(error);
-      res
-        .status(409)
-        .json({ message: "There was an error on the server", status: 409 });
+      res.status(409).send("There was an error on the server");
     }
+  });
+});
+
+// AUTH USER
+router.get("/api/users/:username", (req, res) => {
+  let query = `SELECT * FROM users WHERE username="${req.params.username}"`;
+
+  pool.query(query, async (error, results, fields) => {
+    if (error) {
+      console.log(error);
+      res.status(400).send("Unable to retrieve specified users");
+    }
+    const { firstName, id, userRole, username } = results[0];
+    res.status(200).json({ name: firstName, userId: id, userRole, username });
   });
 });
 
@@ -75,7 +85,7 @@ router.post("/api/users/create", hash, (req, res) => {
         res.status(200);
       } else {
         console.log("User already exists");
-        res.status(409).json({ message: "User already exists", status: 409 });
+        res.status(409).send("User already exists");
       }
     });
   });

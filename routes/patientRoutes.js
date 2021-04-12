@@ -23,7 +23,7 @@ router.post("/api/patient/create", (req, res) => {
       console.log(error);
       res
         .status(400)
-        .json({ message: "Unable to create new patient", status: 400 });
+        .send("Unable to create new patient");
     }
     res.status(200).send(results);
   });
@@ -40,7 +40,7 @@ router.get("/api/patients/:id", (req, res) => {
       console.log(error);
       res
         .status(400)
-        .json({ message: "Unable to get patient info", status: 400 });
+        .send("Unable to get patient info");
     }
     res.status(200).send(results[0]);
   });
@@ -64,7 +64,7 @@ router.post("/api/patients/update", (req, res) => {
       console.log(error);
       res
         .status(400)
-        .json({ message: "Unable to save patient info", status: 400 });
+        .send("Unable to save patient info");
     }
     res.status(200).send("Saved patient info!");
   });

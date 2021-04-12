@@ -48,9 +48,9 @@ router.get("/api/appointment/:appointmentId", (req, res) => {
 });
 
 router.post("/api/appointment/create", (req, res) => {
-  const { date, patientId, physician, status, appointmentId, time } = req.body;
+  const { date, patientId, physician, status, appointmentId, time, physicianId } = req.body;
   let query = `
-    INSERT INTO appointments (date, patientId, physician, status, appointmentId, time) VALUES ("${date}", "${patientId}", "${physician}", "${status}", "${appointmentId}", "${time}");
+    INSERT INTO appointments (date, patientId, physician, status, appointmentId, time, physicianId) VALUES ("${date}", "${patientId}", "${physician}", "${status}", "${appointmentId}", "${time}", "${physicianId}");
     `;
 
   pool.query(query, async (error, results, fields) => {
@@ -79,7 +79,7 @@ router.post("/api/appointment/update", (req, res) => {
       console.log(error);
       res
         .status(400)
-        .json({ message: "Unable to save appointment.", status: 400 });
+        .send("Unable to save appointment.");
     }
     res.status(200).send("Saved appointment info!");
   });
@@ -109,4 +109,18 @@ router.delete("/api/appointment/delete/:id", (req, res) => {
     res.status(200).send("Appointment deleted successfully!");
   });
 });
+
+
+router.post("/api/appointment/diagnosis/:appointmentId", (req, res) => {
+  let query = `UPDATE appointments SET details="${req.body.details}", createReferral="${req.body.createReferral}" WHERE appointmentId="${req.params.appointmentId}"`;
+
+  pool.query(query, async (error, results, fields) => {
+    if (error) {
+      console.log(error);
+      res.status(400).send("Unable to appointment details");
+    }
+    res.status(200).send("Appointment details saved successfully!");
+  });
+});
+
 module.exports = router;

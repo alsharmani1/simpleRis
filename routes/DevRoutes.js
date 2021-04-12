@@ -11,7 +11,7 @@ router.post("/api/admin/role", (req, res) => {
       console.log(error);
       res
         .status(400)
-        .json({ message: "Unable to change user role", status: 400 });
+        .send("Unable to change user role");
     }
     res.status(200).send("Updated user role");
   });
@@ -26,7 +26,7 @@ router.post("/api/admin/appointment/date", (req, res) => {
       console.log(error);
       res
         .status(400)
-        .json({ message: "Unable to change user role", status: 400 });
+        .send("Unable to change user role");
     }
     res.status(200).send("Updated date successfully");
   });

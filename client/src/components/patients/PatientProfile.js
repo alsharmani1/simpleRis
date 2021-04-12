@@ -22,12 +22,13 @@ const PatientProfile = (props) => {
     },
     showModal: false,
     disabled: false,
+    fetching: true
   });
   useEffect(() => {
     axios
       .get(`/api/patients/${props.match.params.id}`)
       .then((res) =>
-        setState((state) => ({ ...state, profileInfo: res.data[0] }))
+        setState((state) => ({ ...state, fetching: false, profileInfo: {...res.data} }))
       )
       .catch((error) =>
         addToast("Unable to retrieve patient info", {
@@ -49,7 +50,7 @@ const PatientProfile = (props) => {
   const saveAppointment = (appointmentState) => {
     const data = {
       ...appointmentState,
-      patientId: state.profileInfo.id,
+      patientId: state.profileInfo.id
     };
 
     axios
@@ -85,6 +86,7 @@ const PatientProfile = (props) => {
       );
   };
 
+  if(state.fetching) return ""
   return (
     <div>
       <Form className="container mt-5">

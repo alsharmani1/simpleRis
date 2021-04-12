@@ -2,13 +2,14 @@ import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { Table, Button } from "react-bootstrap";
 import { useToasts } from "react-toast-notifications";
+import DeleteModal from "./DeleteModal";
 import NewAppointment from "./NewAppointment";
 
 export const convertHr24To12 = (hour, minute) => {
-  const hr = ((parseInt(hour) + 11) % 12 + 1)
-  const suffix = parseInt(hour) >= 12 ? "PM":"AM"; 
-  return `${hr}:${minute} ${suffix}`
-}
+  const hr = ((parseInt(hour) + 11) % 12) + 1;
+  const suffix = parseInt(hour) >= 12 ? "PM" : "AM";
+  return `${hr}:${minute} ${suffix}`;
+};
 
 function Schedule() {
   const { userRole, userId } = JSON.parse(localStorage.getItem("userInfo"));
@@ -16,9 +17,10 @@ function Schedule() {
   const [state, setState] = useState([]);
   const [modalState, setModalState] = useState({
     showModal: false,
+    showDeleteModal: false,
     appointmentId: "",
   });
-  
+
   useEffect(() => {
     getSchedule();
   }, []);
@@ -45,8 +47,7 @@ function Schedule() {
       });
   };
 
-  const deleteHandler = (e, appointmentId, index) => {
-    e.preventDefault();
+  const deleteHandler = (appointmentId, index) => {
     axios
       .delete(`/api/appointment/delete/${appointmentId}`)
       .then((res) => {
@@ -59,6 +60,7 @@ function Schedule() {
           list.splice(index, 1);
           return list;
         });
+        setModalState(state => ({...state, showDeleteModal: !state.showDeleteModal}))
       })
       .catch((error) => {
         addToast(error.response.data, {
@@ -85,6 +87,16 @@ function Schedule() {
       ...state,
       showModal: !state.showModal,
       appointmentInfo,
+    }));
+
+  const toggleDeleteModal = (appointmentId, index) =>
+    setModalState((state) => ({
+      ...state,
+      showDeleteModal: !state.showDeleteModal,
+      deleteAppointmentInfo: {
+        appointmentId,
+        index,
+      },
     }));
 
   const saveAppointment = (appointmentState) => {
@@ -117,7 +129,7 @@ function Schedule() {
                 <th>Date</th>
                 <th>Time</th>
                 <th>Physician</th>
-                <th>Action</th>
+                {userRole === "receptionist" && <th>Action</th>}
               </tr>
             </thead>
             <tbody>
@@ -133,7 +145,7 @@ function Schedule() {
                   patientId,
                 } = info;
 
-                const hm = time.split(":")
+                const hm = time.split(":");
                 const statusName =
                   status === "Not Started" ? "Check-in" : "Check-out";
                 return (
@@ -147,34 +159,34 @@ function Schedule() {
                       <td>{date}</td>
                       <td>{convertHr24To12(hm[0], hm[1])}</td>
                       <td>{physician}</td>
-                      <td>
-                        <a
-                          href="#"
-                          className="mr-2"
-                          onClick={(e) => {
-                            toggleModal(info);
-                          }}
-                        >
-                          Edit
-                        </a>
-                        <a
-                          href="#"
-                          className="mr-2"
-                          onClick={(e) =>
-                            deleteHandler(e, appointmentId, index)
-                          }
-                        >
-                          Delete
-                        </a>
-                        <a
-                          href="#"
-                          onClick={(e) =>
-                            checkInOutHandler(e, appointmentId, statusName)
-                          }
-                        >
-                          {statusName}
-                        </a>
-                      </td>
+                      {userRole === "receptionist" && (
+                        <td>
+                          <a
+                            href="#"
+                            className="mr-2"
+                            onClick={(e) => {
+                              toggleModal(info);
+                            }}
+                          >
+                            Edit
+                          </a>
+                          <a
+                            href="#"
+                            className="mr-2"
+                            onClick={(e) => toggleDeleteModal(appointmentId, index)}
+                          >
+                            Delete
+                          </a>
+                          <a
+                            href="#"
+                            onClick={(e) =>
+                              checkInOutHandler(e, appointmentId, statusName)
+                            }
+                          >
+                            {statusName}
+                          </a>
+                        </td>
+                      )}
                     </tr>
                   )
                 );
@@ -202,6 +214,14 @@ function Schedule() {
               toggleModal={toggleModal}
               appointmentInfo={modalState.appointmentInfo}
               saveAppointment={saveAppointment}
+            />
+          )}
+          {modalState.showDeleteModal && (
+            <DeleteModal
+              showModal={modalState.showDeleteModal}
+              toggleModal={toggleDeleteModal}
+              deleteHandler={deleteHandler}
+              deleteAppointmentInfo={modalState.deleteAppointmentInfo}
             />
           )}
         </>

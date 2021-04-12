@@ -26,6 +26,7 @@ const App = (props) => {
           <PrivateRouter exact path="/appointments/new" component={NewAppointment} />
           <PrivateRouter exact path="/patients" component={PatientSearch} />
           <PrivateRouter exact path="/patients/:id" component={PatientProfile} />
+          <PrivateRouter exact path="/referrals" component={PatientProfile} />
           <PrivateRouter path="/*" component={PageNotFound} />
         </Switch>
       </Router>

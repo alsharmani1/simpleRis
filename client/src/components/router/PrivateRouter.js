@@ -1,20 +1,33 @@
-import React from "react";
+import axios from "axios";
+import React, {useEffect, useState} from "react";
 import {
   BrowserRouter as Router,
   Route,
-  Switch,
   Redirect,
 } from "react-router-dom";
 import { defaultHomePage } from "../common/consts";
 import Navigation from "../common/Navigation";
-import PageNotFound from "../common/PageNotFound";
 
 const PrivateRouter = ({ component: Component, ...rest }) => {
-  const authUser = () => JSON.parse(localStorage.getItem("userInfo"))?.userRole;
+  const [state, setState] = useState({fetching: true, userRole: ""})
+  useEffect(() => {
+    authUser()
+  }, [])
+  const getUserInfo = () => {
+    if(localStorage.getItem("userInfo")) {
+      return JSON.parse(localStorage.getItem("userInfo"))
+    } else return false
+  }
+  const authUser = async () => {
+    const auth = await axios.get(`/api/users/${getUserInfo()?.username}`)
+    auth.data && localStorage.setItem("userInfo", JSON.stringify(auth.data))
+    setState({fetching: false, userRole: getUserInfo()?.userRole})
+  }
 
-  return authUser() && rest.location.pathname === "/" ? (
-    (window.location = defaultHomePage[authUser()])
-  ) : authUser() ? (
+  if(state.fetching) return ""
+  return !state.fetching && state.userRole && rest.location.pathname === "/" ? (
+    (window.location = defaultHomePage[state.userRole])
+  ) : state.userRole ? (
     <>
       <Navigation />
       <Route {...rest} component={Component} />

@@ -3,19 +3,34 @@ import React, { useState, useEffect } from "react";
 import { useToasts } from "react-toast-notifications";
 import { Form, Row, Button, Col } from "react-bootstrap";
 import { scanTypes } from "../common/consts";
+import { convertHr24To12 } from "../schedule/Schedule";
 
 const AppointmentDetails = (props) => {
   const { addToast } = useToasts();
   const [state, setState] = useState({
     patient: {},
     appointment: {},
-    createReferral: "No",
-    formValues: {},
+    formValues: { scanArea: "", scanType: "" },
+    fetching: true
   });
   useEffect(() => {
     getAppointmentAndPatient();
+    getReferralInfo();
   }, []);
 
+  const getReferralInfo = () => {
+    axios.get(`/api/referrals/${props.match.params.id}`).then(
+      (res) =>
+        res.data &&
+        setState((state) => ({
+          ...state,
+          formValues: {
+            scanArea: res.data.scanArea,
+            scanType: res.data.scanType,
+          },
+        }))
+    );
+  };
   const getAppointmentAndPatient = async () => {
     try {
       const appointment = await axios.get(
@@ -24,12 +39,29 @@ const AppointmentDetails = (props) => {
       const patient = await axios.get(
         `/api/patients/${appointment.data.patientId}`
       );
+      const { scanArea, scanType } =
+        appointment.data.createReferral === "Yes" &&
+        (await axios.get(`/api/referrals/${appointment.data.appointmentId}`));
       setState((state) => ({
         ...state,
-        appointment: appointment.data,
+        fetching: false,
+        formValues: {
+          ...state.formValues,
+          scanArea: scanArea || state.formValues.scanArea,
+          scanType: scanType || state.formValues.scanType,
+        },
+        appointment: {
+          ...appointment.data,
+          createReferral: appointment.data.createReferral || "No",
+        },
+        verifyCreateReferral: appointment.data.createReferral || "No",
         patient: patient.data,
       }));
     } catch (error) {
+      setState((state) => ({
+        ...state,
+        fetching: false,
+      }));
       addToast(error.response.data, {
         appearance: "error",
         autoDismiss: true,
@@ -40,13 +72,15 @@ const AppointmentDetails = (props) => {
     e.preventDefault();
     setState((state) => {
       let saveState = { ...state };
-      
-      if(e.target.name === "createReferral") {
-        saveState[e.target.name] = e.target.value;
+
+      if (e.target.name === "createReferral") {
+        saveState.appointment[e.target.name] = e.target.value;
         if (e.target.value === "No") {
           delete saveState.formValues["scanType"];
           delete saveState.formValues["scanArea"];
         }
+      } else if (e.target.name === "details") {
+        saveState.appointment[e.target.name] = e.target.value;
       } else {
         saveState.formValues[e.target.name] = e.target.value;
       }
@@ -55,28 +89,51 @@ const AppointmentDetails = (props) => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    axios
-      .post(
+    const {
+      createReferral,
+      appointmentId,
+      physicianId,
+      details,
+    } = state.appointment;
+
+    try {
+      await axios.post(
         `/api/appointment/diagnosis/${state.appointment.appointmentId}`,
-        state.appointment
-      )
-      .then((res) =>
-        addToast("Saved successfully!", {
-          appearance: "success",
-          autoDismiss: true,
-        })
-      )
-      .catch((error) =>
-        addToast(error.response.data, {
-          appearance: "error",
-          autoDismiss: true,
-        })
+        {
+          details,
+          createReferral,
+        }
       );
+
+      if (createReferral === "Yes") {
+        await axios.post(`/api/referrals/create`, {
+          details,
+          createReferral,
+          appointmentId,
+          physicianId,
+          scanType: state.formValues.scanType,
+          scanArea: state.formValues.scanArea,
+          patientId: state.patient.id,
+        });
+      }
+
+      addToast("Saved successfully!", {
+        appearance: "success",
+        autoDismiss: true,
+      });
+    } catch (error) {
+      addToast(error.response.data, {
+        appearance: "error",
+        autoDismiss: true,
+      });
+    }
   };
+
   const extractAppointmentInfo = () => {
     const {
+      id,
       firstName,
       lastName,
       middleInitial,
@@ -90,6 +147,7 @@ const AppointmentDetails = (props) => {
     } = state.patient;
 
     const { physician, date, time, status } = state.appointment;
+    const hm = time.split(":");
 
     return (
       <>
@@ -97,7 +155,9 @@ const AppointmentDetails = (props) => {
           <Col>
             <p>
               <b>Patient Name:</b>{" "}
-              {`${firstName}, ${middleInitial} ${lastName}`}
+              <a
+                href={`/patients/${id}`}
+              >{`${firstName}, ${middleInitial} ${lastName}`}</a>
             </p>
             <p>
               <b>DOB:</b> {dob}
@@ -136,7 +196,7 @@ const AppointmentDetails = (props) => {
           </Col>
           <Col>
             <p>
-              <b>Time:</b> {time}
+              <b>Time:</b> {convertHr24To12(hm[0], hm[1])}
             </p>
             <p>
               <b>Physician:</b> {physician}
@@ -146,10 +206,13 @@ const AppointmentDetails = (props) => {
       </>
     );
   };
-  const refOptionSize = state.createReferral === "Yes" ? 12 : 4;
+  const refOptionSize = state.appointment.createReferral === "Yes" ? 12 : 4;
+  if (state.fetching) return "";
   return (
-    <div style={{margin: "0 auto", maxWidth: "85%"}}>
-      <h4 className="text-center mt-5">Appointment {state.appointment?.appointmentId}</h4>
+    <div style={{ margin: "0 auto", maxWidth: "85%" }}>
+      <h4 className="text-center mt-5">
+        Appointment {state.appointment?.appointmentId}
+      </h4>
       <div className="mt-5 doctor-notes">{extractAppointmentInfo()}</div>
       <div className="mt-5 patient-info">
         <Form>
@@ -161,21 +224,28 @@ const AppointmentDetails = (props) => {
                 className={`col-lg-${refOptionSize} col-md-${refOptionSize} col-sm-${refOptionSize}`}
                 name="createReferral"
                 onChange={onChange}
-                value={state.createReferral}
+                value={state.appointment.createReferral}
               >
                 <option value="Yes">Yes</option>
                 <option value="No">No</option>
               </Form.Control>
             </Form.Group>
 
-            {state.createReferral !== "No" && (
+            {state.appointment.createReferral !== "No" && (
               <>
                 <Form.Group as={Col}>
                   <Form.Label>Scan Type</Form.Label>
-                  <Form.Control as="select" name="scanType" onChange={onChange}>
+                  <Form.Control
+                    as="select"
+                    name="scanType"
+                    onChange={onChange}
+                    value={state.formValues.scanType}
+                  >
                     <option value="">Select...</option>
-                    {scanTypes.map((item) => (
-                      <option value={item}>{item}</option>
+                    {scanTypes.map((item, index) => (
+                      <option key={index} value={item}>
+                        {item}
+                      </option>
                     ))}
                   </Form.Control>
                 </Form.Group>
@@ -186,6 +256,7 @@ const AppointmentDetails = (props) => {
                     type="text"
                     name="scanArea"
                     onChange={onChange}
+                    value={state.formValues.scanArea}
                   />
                 </Form.Group>
               </>
@@ -197,6 +268,8 @@ const AppointmentDetails = (props) => {
               rows={4}
               cols={50}
               as="textarea"
+              name="details"
+              value={state.appointment.details}
               onChange={onChange}
             />
           </Form.Group>
