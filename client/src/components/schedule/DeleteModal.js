@@ -7,7 +7,7 @@ const DeleteModal = ({
   deleteHandler,
   deleteAppointmentInfo,
 }) => {
-  const { appointmentId, index } = deleteAppointmentInfo;
+  const { id, index } = deleteAppointmentInfo;
   return (
     <Modal show={showModal}>
       <Modal.Header>
@@ -25,7 +25,7 @@ const DeleteModal = ({
         </Button>
         <Button
           variant="primary"
-          onClick={(e) => deleteHandler(appointmentId, index)}
+          onClick={(e) => deleteHandler(id, index)}
         >
           Delete Appointment
         </Button>

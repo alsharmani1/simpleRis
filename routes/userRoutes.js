@@ -35,7 +35,7 @@ router.post("/api/login", (req, res) => {
 });
 
 // AUTH USER
-router.get("/api/users/:username", (req, res) => {
+router.get("/api/auth/users/:username", (req, res) => {
   let query = `SELECT * FROM users WHERE username="${req.params.username}"`;
 
   pool.query(query, async (error, results, fields) => {
@@ -43,6 +43,7 @@ router.get("/api/users/:username", (req, res) => {
       console.log(error);
       res.status(400).send("Unable to retrieve specified users");
     }
+
     const { firstName, id, userRole, username } = results[0];
     res.status(200).json({ name: firstName, userId: id, userRole, username });
   });
@@ -91,7 +92,7 @@ router.post("/api/users/create", hash, (req, res) => {
   });
 });
 
-//GET Specific User
+//GET SPECIFIC USER BY USER ROLE
 router.get("/api/users/:userRole", (req, res) => {
   let query = `SELECT * FROM users WHERE userRole="${req.params.userRole}"`;
 
@@ -104,4 +105,16 @@ router.get("/api/users/:userRole", (req, res) => {
   });
 });
 
+// GET SPECIFIC USER BY ID
+router.get("/api/user/:userId", (req, res) => {
+  let query = `SELECT * FROM users WHERE userRole="${req.params.userId}"`;
+
+  pool.query(query, async (error, results, fields) => {
+    if (error) {
+      console.log(error);
+      res.status(400).send("Unable to retrieve specified user");
+    }
+    res.status(200).send(results);
+  });
+});
 module.exports = router;

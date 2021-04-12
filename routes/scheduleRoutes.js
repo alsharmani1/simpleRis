@@ -47,6 +47,7 @@ router.get("/api/appointment/:appointmentId", (req, res) => {
   });
 });
 
+//CREATE APPOINTMENT
 router.post("/api/appointment/create", (req, res) => {
   const { date, patientId, physician, status, appointmentId, time, physicianId } = req.body;
   let query = `

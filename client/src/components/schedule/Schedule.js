@@ -60,7 +60,10 @@ function Schedule() {
           list.splice(index, 1);
           return list;
         });
-        setModalState(state => ({...state, showDeleteModal: !state.showDeleteModal}))
+        setModalState((state) => ({
+          ...state,
+          showDeleteModal: !state.showDeleteModal,
+        }));
       })
       .catch((error) => {
         addToast(error.response.data, {
@@ -173,7 +176,9 @@ function Schedule() {
                           <a
                             href="#"
                             className="mr-2"
-                            onClick={(e) => toggleDeleteModal(appointmentId, index)}
+                            onClick={(e) =>
+                              toggleDeleteModal(appointmentId, index)
+                            }
                           >
                             Delete
                           </a>
@@ -214,6 +219,7 @@ function Schedule() {
               toggleModal={toggleModal}
               appointmentInfo={modalState.appointmentInfo}
               saveAppointment={saveAppointment}
+              physicianRole="MD"
             />
           )}
           {modalState.showDeleteModal && (

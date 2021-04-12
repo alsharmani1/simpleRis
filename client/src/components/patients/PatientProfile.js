@@ -214,6 +214,7 @@ const PatientProfile = (props) => {
           showModal={state.showModal}
           toggleModal={toggleModal}
           saveAppointment={saveAppointment}
+          physicianRole="MD"
         />
       )}
     </div>

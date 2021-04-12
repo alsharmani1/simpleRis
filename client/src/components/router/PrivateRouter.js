@@ -19,7 +19,7 @@ const PrivateRouter = ({ component: Component, ...rest }) => {
     } else return false
   }
   const authUser = async () => {
-    const auth = await axios.get(`/api/users/${getUserInfo()?.username}`)
+    const auth = await axios.get(`/api/auth/users/${getUserInfo()?.username}`)
     auth.data && localStorage.setItem("userInfo", JSON.stringify(auth.data))
     setState({fetching: false, userRole: getUserInfo()?.userRole})
   }

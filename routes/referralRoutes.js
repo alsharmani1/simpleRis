@@ -11,6 +11,9 @@ router.post("/api/referrals/create", (req, res) => {
     patientId,
     scanType,
     scanArea,
+    referralAppointmentId,
+    radiologist,
+    radiologistId,
   } = req.body;
   const referralExistsQuery = `SELECT * FROM referrals WHERE appointmentId="${appointmentId}"`;
 
@@ -32,19 +35,22 @@ router.post("/api/referrals/create", (req, res) => {
           }
         });
       } else {
-        const dataKeys = Object.keys(req.body);
+        const dataKeys = Object.keys(req.body).filter(
+          (item) => item !== "appointmentId" && item !== "createReferral"
+        );
+        console.log({ dataKeys });
         const formatQuery =
           results[0] &&
           dataKeys.map((key, index) => {
-            if (key !== "createReferral" && key !== "appointmentId") {
-              if (index !== dataKeys.length - 1)
-                return `${key}="${req.body[key]}",`;
-              if (index === dataKeys.length - 1)
-                return `${key}="${req.body[key]}"`;
-            }
+            if (index !== dataKeys.length - 1)
+              return `${key}="${req.body[key]}",`;
+            if (index === dataKeys.length - 1)
+              return `${key}="${req.body[key]}"`;
           });
 
-        updateReferralQuery = `${updateReferralQuery} ${formatQuery.join("")} WHERE appointmentId="${req.body.appointmentId}"`;
+        updateReferralQuery = `${updateReferralQuery} ${formatQuery.join(
+          ""
+        )} WHERE appointmentId="${req.body.appointmentId}"`;
         results[0] &&
           connection.query(updateReferralQuery, (error, results, fields) => {
             if (error) {
@@ -79,7 +85,19 @@ router.get("/api/referrals", async (req, res) => {
       console.log(error);
       res.status(400).send("Unable to retrieve referrals.");
     }
-    res.status(200).json(results);
+    res.status(200).send(results);
+  });
+});
+
+// GET ALL REFERRAL
+router.delete("/api/referral/delete/:id", async (req, res) => {
+  let query = `DELETE FROM referrals WHERE id="${req.params.id}"`;
+  pool.query(query, async (error, results, fields) => {
+    if (error) {
+      console.log(error);
+      res.status(400).send("Unable to delete referral.");
+    }
+    res.status(200).send("Deleted referral successfully!");
   });
 });
 module.exports = router;

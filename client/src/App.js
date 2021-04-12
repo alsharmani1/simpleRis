@@ -14,6 +14,7 @@ import Schedule from "./components/schedule/Schedule";
 import NewAppointment from "./components/schedule/NewAppointment";
 import PatientProfile from "./components/patients/PatientProfile";
 import AppointmentDetails from "./components/schedule/AppointmentDetails";
+import Referrals from "./components/referrals/Referrals";
 
 const App = (props) => {
   return (
@@ -26,7 +27,7 @@ const App = (props) => {
           <PrivateRouter exact path="/appointments/new" component={NewAppointment} />
           <PrivateRouter exact path="/patients" component={PatientSearch} />
           <PrivateRouter exact path="/patients/:id" component={PatientProfile} />
-          <PrivateRouter exact path="/referrals" component={PatientProfile} />
+          <PrivateRouter exact path="/referrals" component={Referrals} />
           <PrivateRouter path="/*" component={PageNotFound} />
         </Switch>
       </Router>

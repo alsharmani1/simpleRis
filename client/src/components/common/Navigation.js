@@ -29,6 +29,9 @@ const Navigation = () => {
         <Nav className="mr-auto">
           <Nav.Link href="/appointments">Schedule</Nav.Link>
           <Nav.Link href="/patients">Patients</Nav.Link>
+          {userRole === "receptionist" && (
+            <Nav.Link href="/referrals">Referrals</Nav.Link>
+          )}
         </Nav>
         <Nav inline="true">
           <div style={{ margin: "7px 8px 0", color: "white" }}>
