@@ -4,7 +4,7 @@ const pool = require("../config/db");
 
 //Change User Role
 router.post("/api/admin/role", (req, res) => {
-  const query = `UPDATE users SET userRole="${req.body.userRole}" WHERE username="${req.body.username}"`;
+  const query = `UPDATE users SET userRole="${req.body.userRole}", jobRole="${req.body.jobRole}" WHERE username="${req.body.username}"`;
 
   pool.query(query, async (error, results, fields) => {
     if (error) {

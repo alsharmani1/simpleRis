@@ -8,14 +8,14 @@ router.get("/api/logout", (req, res) => {
 });
 
 router.post("/api/login", (req, res) => {
-  const { id, username, password: reqPassword, userRole } = req.body;
+  const { username, password: reqPassword } = req.body;
   const userExistsQuery = `
   SELECT * FROM users WHERE username="${username}"
 `;
 
   pool.query(userExistsQuery, async (error, results, fields) => {
     if (error) console.log(error);
-    const { password, username, firstName, userRole, id, jobRole } = results[0];
+    const { username, firstName, userRole, id, jobRole } = results[0];
 
     try {
       const hashedPassword = await compare(reqPassword, results[0].password);
@@ -36,6 +36,10 @@ router.post("/api/login", (req, res) => {
 
 // AUTH USER
 router.get("/api/auth/users/:username", (req, res) => {
+  if (req.params.username === "undefined" || !req.params.username) {
+    res.status(400).send("Unable to retrieve specified users");
+  }
+
   let query = `SELECT * FROM users WHERE username="${req.params.username}"`;
 
   pool.query(query, async (error, results, fields) => {
@@ -44,8 +48,10 @@ router.get("/api/auth/users/:username", (req, res) => {
       res.status(400).send("Unable to retrieve specified users");
     }
 
-    const { firstName, id, userRole, username } = results[0];
-    res.status(200).json({ name: firstName, userId: id, userRole, username });
+    const { firstName, id, userRole, username, jobRole } = results[0];
+    res
+      .status(200)
+      .json({ name: firstName, userId: id, userRole, username, jobRole });
   });
 });
 

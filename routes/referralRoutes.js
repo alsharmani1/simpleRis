@@ -100,4 +100,5 @@ router.delete("/api/referral/delete/:id", async (req, res) => {
     res.status(200).send("Deleted referral successfully!");
   });
 });
+
 module.exports = router;

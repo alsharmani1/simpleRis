@@ -13,8 +13,8 @@ const getCurrentDateTimeMySql = () => {
 };
 
 //GET ALL APPOINTMENTS
-router.get("/api/schedule/:jobRole/:physicianId", (req, res) => {
-  
+router.post("/api/appointments", (req, res) => {
+  const { jobRole, userId } = req.body;
   const today = getCurrentDateTimeMySql().split(" ")[0];
   let query = `
     SELECT appointments.*, patients.firstName, patients.lastName 
@@ -22,7 +22,14 @@ router.get("/api/schedule/:jobRole/:physicianId", (req, res) => {
     WHERE appointments.date="${today}"
     `;
 
-  query = req.params.jobRole !== "none" ? query + ` AND appointments.status="Pending" AND appointments.physicianId="${req.params.physicianId}"` : query
+  query =
+    jobRole === "MD" || jobRole === "radiologist"
+      ? query +
+        ` AND appointments.status="Pending" AND appointments.physicianId="${userId}"`
+      : jobRole === "technician"
+      ? query + ` AND appointments.appointmentId LIKE '%RT-%'`
+      : query;
+
   pool.query(query, async (error, results, fields) => {
     if (error) {
       console.log(error);
@@ -49,7 +56,15 @@ router.get("/api/appointment/:appointmentId", (req, res) => {
 
 //CREATE APPOINTMENT
 router.post("/api/appointment/create", (req, res) => {
-  const { date, patientId, physician, status, appointmentId, time, physicianId } = req.body;
+  const {
+    date,
+    patientId,
+    physician,
+    status,
+    appointmentId,
+    time,
+    physicianId,
+  } = req.body;
   let query = `
     INSERT INTO appointments (date, patientId, physician, status, appointmentId, time, physicianId) VALUES ("${date}", "${patientId}", "${physician}", "${status}", "${appointmentId}", "${time}", "${physicianId}");
     `;
@@ -62,7 +77,7 @@ router.post("/api/appointment/create", (req, res) => {
   });
 });
 
-// UPDATE APPOINTMENT 
+// UPDATE APPOINTMENT
 router.post("/api/appointment/update", (req, res) => {
   let query = "UPDATE appointments SET";
   const dataKeys = Object.keys(req.body);
@@ -72,15 +87,15 @@ router.post("/api/appointment/update", (req, res) => {
     if (index === dataKeys.length - 1) return `${key}="${req.body[key]}"`;
   });
 
-  query = `${query} ${formatQuery.join(" ")} WHERE appointmentId="${req.body.appointmentId}"`;
+  query = `${query} ${formatQuery.join(" ")} WHERE appointmentId="${
+    req.body.appointmentId
+  }"`;
 
   console.log(query);
   pool.query(query, async (error, results, fields) => {
     if (error) {
       console.log(error);
-      res
-        .status(400)
-        .send("Unable to save appointment.");
+      res.status(400).send("Unable to save appointment.");
     }
     res.status(200).send("Saved appointment info!");
   });
@@ -110,7 +125,6 @@ router.delete("/api/appointment/delete/:id", (req, res) => {
     res.status(200).send("Appointment deleted successfully!");
   });
 });
-
 
 router.post("/api/appointment/diagnosis/:appointmentId", (req, res) => {
   let query = `UPDATE appointments SET details="${req.body.details}", createReferral="${req.body.createReferral}" WHERE appointmentId="${req.params.appointmentId}"`;

@@ -4,11 +4,11 @@ import { Navbar, Nav, Form, Button, FormControl } from "react-bootstrap";
 import { defaultHomePage } from "./consts";
 
 const Navigation = () => {
-  const { name, userRole } = JSON.parse(localStorage.getItem("userInfo"));
+  const { name, jobRole } = JSON.parse(localStorage.getItem("userInfo"));
 
   const redirectToHomePage = () => {
-    const userRole = JSON.parse(localStorage.getItem("userInfo")).userRole;
-    window.location = defaultHomePage[userRole];
+    const jobRole = JSON.parse(localStorage.getItem("userInfo")).jobRole;
+    window.location = defaultHomePage[jobRole];
   };
 
   const logout = () => {
@@ -20,16 +20,19 @@ const Navigation = () => {
       })
       .catch((error) => console.log(error));
   };
+  
   return (
     <>
       <Navbar bg="dark" variant="dark">
-        <Navbar.Brand onClick={() => redirectToHomePage()}>
+        <Navbar.Brand style={{cursor: "pointer"}} onClick={() => redirectToHomePage()}>
           SimpleRIS
         </Navbar.Brand>
         <Nav className="mr-auto">
           <Nav.Link href="/appointments">Schedule</Nav.Link>
-          <Nav.Link href="/patients">Patients</Nav.Link>
-          {userRole === "receptionist" && (
+          {jobRole === "receptionist" && jobRole === "MD" && (
+            <Nav.Link href="/patients">Patients</Nav.Link>
+          )}
+          {jobRole === "receptionist" && (
             <Nav.Link href="/referrals">Referrals</Nav.Link>
           )}
         </Nav>

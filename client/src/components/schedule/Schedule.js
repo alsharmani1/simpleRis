@@ -12,7 +12,8 @@ export const convertHr24To12 = (hour, minute) => {
 };
 
 function Schedule() {
-  const { userRole, jobRole, userId } = JSON.parse(localStorage.getItem("userInfo"));
+  const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+  const { jobRole } = userInfo;
   const { addToast } = useToasts();
   const [state, setState] = useState([]);
   const [modalState, setModalState] = useState({
@@ -25,21 +26,15 @@ function Schedule() {
     getSchedule();
   }, []);
 
-  const getUserParamsForAppointmentList = ({ jobRole, userId }) => {
-    const userParamsList = {
-      MD: `/MD/${userId}`,
-      radiologist: `/radiologist/${userId}`,
-      technician: `/technician/${userId}`,
-    };
-    return userParamsList[jobRole] || "/none/none";
-  };
-
-  const  getSchedule = () => {
-    if() {
-      
-    } else () {
-      
-    }
+  const getSchedule = () => {
+    axios
+      .post(`/api/appointments`, userInfo)
+      .then((res) => {
+        setState(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   const deleteHandler = (appointmentId, index) => {
@@ -127,7 +122,9 @@ function Schedule() {
                 <th>Date</th>
                 <th>Time</th>
                 <th>Physician</th>
-                {userRole === "receptionist" && <th>Action</th>}
+                {(jobRole === "receptionist" || jobRole === "technician") && (
+                  <th>Action</th>
+                )}
               </tr>
             </thead>
             <tbody>
@@ -151,42 +148,75 @@ function Schedule() {
                     <tr key={index}>
                       <td>
                         <a
-                          href={`/appointments/${appointmentId}`}
+                          href="#"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            if (status === "Not Started") {
+                              addToast("Patient has not checked in yet.", {
+                                appearance: "info",
+                                autoDismiss: true,
+                              });
+                            } else {
+                              window.location =
+                                jobRole === "technician" ||
+                                jobRole === "radiologist"
+                                  ? `/worklist/${appointmentId}`
+                                  : `/appointments/${appointmentId}`;
+                            }
+                          }}
                         >{`${lastName}, ${firstName}`}</a>
                       </td>
                       <td>{date}</td>
                       <td>{convertHr24To12(hm[0], hm[1])}</td>
                       <td>{physician}</td>
-                      {userRole === "receptionist" && (
-                        <td>
+                      <td>
+                        {jobRole === "receptionist" && (
+                          <>
+                            <a
+                              href="#"
+                              className="mr-2"
+                              onClick={(e) => {
+                                toggleModal(info);
+                              }}
+                            >
+                              Edit
+                            </a>
+                            <a
+                              href="#"
+                              className="mr-2"
+                              onClick={(e) =>
+                                toggleDeleteModal(appointmentId, index)
+                              }
+                            >
+                              Delete
+                            </a>
+                          </>
+                        )}
+                        {(jobRole === "receptionist" ||
+                          jobRole === "technician") && (
                           <a
                             href="#"
-                            className="mr-2"
                             onClick={(e) => {
-                              toggleModal(info);
+                              e.preventDefault();
+                              status === "Not Started" && jobRole === "receptionist"
+                                ? checkInOutHandler(
+                                    e,
+                                    appointmentId,
+                                    statusName
+                                  )
+                                : addToast(
+                                    "You are only allowed to check-out the patient. Please wait for the patient to be checked in.",
+                                    {
+                                      appearance: "info",
+                                      autoDismiss: true,
+                                    }
+                                  );
                             }}
-                          >
-                            Edit
-                          </a>
-                          <a
-                            href="#"
-                            className="mr-2"
-                            onClick={(e) =>
-                              toggleDeleteModal(appointmentId, index)
-                            }
-                          >
-                            Delete
-                          </a>
-                          <a
-                            href="#"
-                            onClick={(e) =>
-                              checkInOutHandler(e, appointmentId, statusName)
-                            }
                           >
                             {statusName}
                           </a>
-                        </td>
-                      )}
+                        )}
+                      </td>
                     </tr>
                   )
                 );

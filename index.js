@@ -7,11 +7,9 @@ const searchRoutes = require('./routes/searchRoutes')
 const scheduleRoutes = require('./routes/scheduleRoutes')
 const patientRoutes = require('./routes/patientRoutes')
 const referralRoutes = require('./routes/referralRoutes')
+const worklistRoutes = require('./routes/worklistRoutes')
 const DevRoutes = require('./routes/DevRoutes')
 const path = require('path')
-const pool = require('./config/db')
-
-//config env variables
 
 //Request Parsing/Parse incoming JSON
 
@@ -25,6 +23,7 @@ app.use(searchRoutes)
 app.use(scheduleRoutes)
 app.use(patientRoutes)
 app.use(referralRoutes)
+app.use(worklistRoutes)
 app.use(DevRoutes)
 
 app.listen(5000, () => {

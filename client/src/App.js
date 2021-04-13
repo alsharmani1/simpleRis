@@ -15,16 +15,19 @@ import NewAppointment from "./components/schedule/NewAppointment";
 import PatientProfile from "./components/patients/PatientProfile";
 import AppointmentDetails from "./components/schedule/AppointmentDetails";
 import Referrals from "./components/referrals/Referrals";
+import UploadImages from "./components/referrals/UploadImages";
 
 const App = (props) => {
+  const jobRole = JSON.parse(localStorage.getItem("userInfo"))?.jobRole;
+  const role = jobRole === "technician" || jobRole === "radiologist"
   return (
     <ToastProvider>
       <Router>
         <Switch>
           <Route exact path="/login" component={Login}/>
           <PrivateRouter exact path="/" component={Login}/>
-          <PrivateRouter exact path="/appointments" component={Schedule} />
-          <PrivateRouter exact path="/appointments/:id" component={AppointmentDetails} />
+          <PrivateRouter exact path={role ? "/worklist" : "/appointments"} component={Schedule} />
+          <PrivateRouter exact path={role ? "/worklist/:id" : "/appointments/:id"} component={role ? UploadImages : AppointmentDetails} />
           <PrivateRouter exact path="/appointments/new" component={NewAppointment} />
           <PrivateRouter exact path="/patients" component={PatientSearch} />
           <PrivateRouter exact path="/patients/:id" component={PatientProfile} />
