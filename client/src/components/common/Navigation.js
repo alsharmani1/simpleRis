@@ -20,15 +20,22 @@ const Navigation = () => {
       })
       .catch((error) => console.log(error));
   };
-  
+
   return (
     <>
       <Navbar bg="dark" variant="dark">
-        <Navbar.Brand style={{cursor: "pointer"}} onClick={() => redirectToHomePage()}>
+        <Navbar.Brand
+          style={{ cursor: "pointer" }}
+          onClick={() => redirectToHomePage()}
+        >
           SimpleRIS
         </Navbar.Brand>
         <Nav className="mr-auto">
-          <Nav.Link href="/appointments">Schedule</Nav.Link>
+          {jobRole === "technician" || jobRole === "radiologist" ? (
+            <Nav.Link href="/worklist">Worklist</Nav.Link>
+          ) : (
+            <Nav.Link href="/appointments">Schedule</Nav.Link>
+          )}
           {jobRole === "receptionist" && jobRole === "MD" && (
             <Nav.Link href="/patients">Patients</Nav.Link>
           )}

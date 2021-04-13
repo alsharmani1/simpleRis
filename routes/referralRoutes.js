@@ -65,7 +65,7 @@ router.post("/api/referrals/create", (req, res) => {
   });
 });
 
-// GET REFERRAL
+// GET REFERRAL BY APPOITMENT ID
 router.get("/api/referrals/:appointmentId", async (req, res) => {
   let query = `SELECT * FROM referrals WHERE appointmentId="${req.params.appointmentId}"`;
   pool.query(query, async (error, results, fields) => {
@@ -76,6 +76,19 @@ router.get("/api/referrals/:appointmentId", async (req, res) => {
     res.status(200).json(results[0]);
   });
 });
+
+// GET REFERRAL BY APPOITMENT ID
+router.get("/api/referrals/referral/:referralAppointmentId", async (req, res) => {
+  let query = `SELECT * FROM referrals WHERE referralAppointmentId="${req.params.referralAppointmentId}"`;
+  pool.query(query, async (error, results, fields) => {
+    if (error) {
+      console.log(error);
+      res.status(400).send("Unable to retrieve referral information.");
+    }
+    res.status(200).json(results[0]);
+  });
+});
+
 
 // GET ALL REFERRAL
 router.get("/api/referrals", async (req, res) => {

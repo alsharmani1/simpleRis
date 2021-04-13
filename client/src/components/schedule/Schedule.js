@@ -169,36 +169,37 @@ function Schedule() {
                       <td>{date}</td>
                       <td>{convertHr24To12(hm[0], hm[1])}</td>
                       <td>{physician}</td>
-                      <td>
-                        {jobRole === "receptionist" && (
-                          <>
-                            <a
-                              href="#"
-                              className="mr-2"
-                              onClick={(e) => {
-                                toggleModal(info);
-                              }}
-                            >
-                              Edit
-                            </a>
-                            <a
-                              href="#"
-                              className="mr-2"
-                              onClick={(e) =>
-                                toggleDeleteModal(appointmentId, index)
-                              }
-                            >
-                              Delete
-                            </a>
-                          </>
-                        )}
-                        {(jobRole === "receptionist" ||
-                          jobRole === "technician") && (
+                      {(jobRole === "receptionist" ||
+                        jobRole === "technician") && (
+                        <td>
+                          {jobRole === "receptionist" && (
+                            <>
+                              <a
+                                href="#"
+                                className="mr-2"
+                                onClick={(e) => {
+                                  toggleModal(info);
+                                }}
+                              >
+                                Edit
+                              </a>
+                              <a
+                                href="#"
+                                className="mr-2"
+                                onClick={(e) =>
+                                  toggleDeleteModal(appointmentId, index)
+                                }
+                              >
+                                Delete
+                              </a>
+                            </>
+                          )}
                           <a
                             href="#"
                             onClick={(e) => {
                               e.preventDefault();
-                              status === "Not Started" && jobRole === "receptionist"
+                              status === "Not Started" &&
+                              jobRole === "receptionist"
                                 ? checkInOutHandler(
                                     e,
                                     appointmentId,
@@ -215,8 +216,8 @@ function Schedule() {
                           >
                             {statusName}
                           </a>
-                        )}
-                      </td>
+                        </td>
+                      )}
                     </tr>
                   )
                 );
