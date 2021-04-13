@@ -15,7 +15,7 @@ router.post("/api/login", (req, res) => {
 
   pool.query(userExistsQuery, async (error, results, fields) => {
     if (error) console.log(error);
-    const { password, username, firstName, userRole, id } = results[0];
+    const { password, username, firstName, userRole, id, jobRole } = results[0];
 
     try {
       const hashedPassword = await compare(reqPassword, results[0].password);
@@ -23,7 +23,7 @@ router.post("/api/login", (req, res) => {
         res
           .cookie("auth", username, { maxAge: 60 * 60 * 8 })
           .status(200)
-          .json({ name: firstName, userRole, userId: id, username });
+          .json({ name: firstName, userRole, userId: id, username, jobRole });
       } else {
         res.status(401).send("Username or password is wrong");
       }

@@ -12,7 +12,7 @@ export const convertHr24To12 = (hour, minute) => {
 };
 
 function Schedule() {
-  const { userRole, userId } = JSON.parse(localStorage.getItem("userInfo"));
+  const { userRole, jobRole, userId } = JSON.parse(localStorage.getItem("userInfo"));
   const { addToast } = useToasts();
   const [state, setState] = useState([]);
   const [modalState, setModalState] = useState({
@@ -25,26 +25,21 @@ function Schedule() {
     getSchedule();
   }, []);
 
-  const getUserParamsForAppointmentList = ({ userRole, userId }) => {
+  const getUserParamsForAppointmentList = ({ jobRole, userId }) => {
     const userParamsList = {
       MD: `/MD/${userId}`,
-      RT: `/RT/${userId}`,
+      radiologist: `/radiologist/${userId}`,
       technician: `/technician/${userId}`,
     };
-    return userParamsList[userRole] || "/none/none";
+    return userParamsList[jobRole] || "/none/none";
   };
 
-  const getSchedule = () => {
-    axios
-      .get(
-        `/api/schedule${getUserParamsForAppointmentList({ userRole, userId })}`
-      )
-      .then((res) => {
-        setState(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+  const  getSchedule = () => {
+    if() {
+      
+    } else () {
+      
+    }
   };
 
   const deleteHandler = (appointmentId, index) => {

@@ -13,7 +13,7 @@ const getCurrentDateTimeMySql = () => {
 };
 
 //GET ALL APPOINTMENTS
-router.get("/api/schedule/:userRole/:physicianId", (req, res) => {
+router.get("/api/schedule/:jobRole/:physicianId", (req, res) => {
   
   const today = getCurrentDateTimeMySql().split(" ")[0];
   let query = `
@@ -22,7 +22,7 @@ router.get("/api/schedule/:userRole/:physicianId", (req, res) => {
     WHERE appointments.date="${today}"
     `;
 
-  query = req.params.userRole !== "none" ? query + ` AND appointments.status="Pending" AND appointments.physicianId="${req.params.physicianId}"` : query
+  query = req.params.jobRole !== "none" ? query + ` AND appointments.status="Pending" AND appointments.physicianId="${req.params.physicianId}"` : query
   pool.query(query, async (error, results, fields) => {
     if (error) {
       console.log(error);

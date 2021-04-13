@@ -76,11 +76,11 @@ const NewAppointment = (props) => {
               >
                 <option value="">Select...</option>
                 {physicians.map(
-                  ({ lastName, firstName, userRole, id }, index) => (
+                  ({ lastName, firstName, jobRole, id }, index) => (
                     <option
                       key={index}
-                      value={`${lastName}, ${firstName} ${userRole}|${id}`}
-                    >{`${lastName}, ${firstName} ${userRole}`}</option>
+                      value={`${lastName}, ${firstName} ${jobRole}|${id}`}
+                    >{`${lastName}, ${firstName} ${jobRole}`}</option>
                   )
                 )}
               </Form.Control>

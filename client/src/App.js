@@ -22,6 +22,7 @@ const App = (props) => {
       <Router>
         <Switch>
           <Route exact path="/login" component={Login}/>
+          <PrivateRouter exact path="/" component={Login}/>
           <PrivateRouter exact path="/appointments" component={Schedule} />
           <PrivateRouter exact path="/appointments/:id" component={AppointmentDetails} />
           <PrivateRouter exact path="/appointments/new" component={NewAppointment} />
