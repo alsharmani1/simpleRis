@@ -16,22 +16,8 @@ const ReferralDetails = (props) => {
   });
   useEffect(() => {
     getAppointmentAndPatient();
-    // getReferralInfo();
   }, []);
 
-  //   const getReferralInfo = () => {
-  //     axios.get(`/api/worklist/${props.match.params.id}`).then(
-  //       (res) =>
-  //         res.data &&
-  //         setState((state) => ({
-  //           ...state,
-  //           formValues: {
-  //             scanArea: res.data.scanArea,
-  //             scanType: res.data.scanType,
-  //           },
-  //         }))
-  //     );
-  //   };
   const getAppointmentAndPatient = async () => {
     try {
       const appointment = await axios.get(
@@ -102,7 +88,7 @@ const ReferralDetails = (props) => {
     } = state.appointment;
 
     try {
-      await axios.post(
+      const diagnosis = await axios.post(
         `/api/appointment/diagnosis/${state.appointment.appointmentId}`,
         {
           details,
@@ -110,6 +96,7 @@ const ReferralDetails = (props) => {
         }
       );
 
+      diagnosis.status === 200 && await axios.post(`/api/appointment/status/${state.appointment.appointmentId}`, {status: "Check-out"})
       if (createReferral === "Yes") {
         await axios.post(`/api/referrals/create`, {
           details,
@@ -241,7 +228,7 @@ const ReferralDetails = (props) => {
         Appointment {state.appointment?.appointmentId}
       </h4>
       <div className="mt-5 doctor-notes">{extractAppointmentInfo()}</div>
-      <div className="mt-3 patient-info">
+      <div className="mt-3 mb-5 patient-info">
         <Form>
           <Form.Row></Form.Row>
           <Form.Group>
