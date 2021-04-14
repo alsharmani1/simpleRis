@@ -208,7 +208,7 @@ const PatientProfile = (props) => {
         </Button>
       </Form>
 
-      <VisitHistory patientInfo={state.patientInfo} />
+      {state.profileInfo?.id && <VisitHistory patientInfo={state.profileInfo} />}
       {state.showModal && (
         <NewAppointment
           showModal={state.showModal}

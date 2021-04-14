@@ -11,7 +11,7 @@ const AppointmentDetails = (props) => {
     patient: {},
     appointment: {},
     formValues: { scanArea: "", scanType: "" },
-    fetching: true
+    fetching: true,
   });
   useEffect(() => {
     getAppointmentAndPatient();
@@ -39,6 +39,11 @@ const AppointmentDetails = (props) => {
       const patient = await axios.get(
         `/api/patients/${appointment.data.patientId}`
       );
+
+      const referrals = await axios.get(
+        `/api/worklist/${props.match.params.id}`
+      );
+
       const { scanArea, scanType } =
         appointment.data.createReferral === "Yes" &&
         (await axios.get(`/api/referrals/${appointment.data.appointmentId}`));
@@ -50,6 +55,7 @@ const AppointmentDetails = (props) => {
           scanArea: scanArea || state.formValues.scanArea,
           scanType: scanType || state.formValues.scanType,
         },
+        images: referrals.data.finalImagePaths || [],
         appointment: {
           ...appointment.data,
           createReferral: appointment.data.createReferral || "No",
@@ -147,6 +153,7 @@ const AppointmentDetails = (props) => {
     } = state.patient;
 
     const { physician, date, time, status } = state.appointment;
+    const { scanArea, scanType } = state.formValues;
     const hm = time.split(":");
 
     return (
@@ -203,6 +210,36 @@ const AppointmentDetails = (props) => {
             </p>
           </Col>
         </Row>
+
+        {state.images && (
+          <>
+            <h4 className="mb-5 mt-5 text-center">Patient Scan Information</h4>
+            <Row className="mt-5">
+              <Col>
+                <p>
+                  <b>Scan Type:</b> {scanType}
+                </p>
+                <p>
+                  <b>Scan Area:</b> {scanArea}
+                </p>
+                <p>
+                  <b>Image List:</b>
+                </p>
+                <ul>
+                  {state.images.map((path, i) => {
+                    return (
+                      <li key={i}>
+                        <a href={path} target="_blank">
+                          Image #{i + 1}
+                        </a>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </Col>
+            </Row>
+          </>
+        )}
       </>
     );
   };
@@ -215,7 +252,7 @@ const AppointmentDetails = (props) => {
       </h4>
       <div className="mt-5 doctor-notes">{extractAppointmentInfo()}</div>
       <div className="mt-5 patient-info">
-        <Form>
+        <Form className="mb-5">
           <Form.Row>
             <Form.Group as={Col}>
               <Form.Label>Create referral?</Form.Label>
@@ -262,7 +299,7 @@ const AppointmentDetails = (props) => {
               </>
             )}
           </Form.Row>
-          <Form.Group>
+          <Form.Group >
             <Form.Label>Doctor's Notes</Form.Label>
             <Form.Control
               rows={4}
@@ -277,6 +314,7 @@ const AppointmentDetails = (props) => {
           <Button
             variant="primary"
             type="submit"
+            disabled={state.appointment.status === "Complete"}
             onClick={(e) => handleSubmit(e)}
           >
             Save

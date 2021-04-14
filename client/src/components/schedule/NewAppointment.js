@@ -80,7 +80,7 @@ const NewAppointment = (props) => {
                     <option
                       key={index}
                       value={`${lastName}, ${firstName} ${jobRole}|${id}`}
-                    >{`${lastName}, ${firstName} ${jobRole}`}</option>
+                    >{`${lastName}, ${firstName} ${jobRole.charAt(0).toUpperCase() + jobRole.slice(1)}`}</option>
                   )
                 )}
               </Form.Control>

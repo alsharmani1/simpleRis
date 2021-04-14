@@ -34,6 +34,7 @@ router.post(
         imagePath.push(`./uploads/${filename}`);
       });
 
+      // console.log(appointmentInfo)
       const {
         patientId,
         scanArea,
@@ -65,12 +66,14 @@ router.post(
 
 //GET WORKLIST BY referralAppointmentId
 router.get("/api/worklist/:referralAppointmentId", (req, res) => {
-  let query = `SELECT * FROM worklist WHERE referralAppointmentId="${req.params.referralAppointmentId}"`;
+  let query = `SELECT * FROM worklist WHERE referralAppointmentId="${req.params.referralAppointmentId}" OR appointmentId="${req.params.referralAppointmentId}"`;
   pool.query(query, async (error, results, fields) => {
     if (error) {
       console.log(error);
       res.status(400).send("Unable to upload images.");
     }
+    console.log(results)
+
     const imagePathsArray = results[0].imagePath.replace(/\.\//g, "http://localhost:5000/").split("|")
     const finalResult = {...results[0], finalImagePaths: imagePathsArray}
     res.status(200).json(finalResult);

@@ -85,6 +85,8 @@ router.get("/api/referrals/referral/:referralAppointmentId", async (req, res) =>
       console.log(error);
       res.status(400).send("Unable to retrieve referral information.");
     }
+    console.log(req.params.referralAppointmentId)
+    console.log(results)
     res.status(200).json(results[0]);
   });
 });

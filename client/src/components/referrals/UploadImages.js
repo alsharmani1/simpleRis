@@ -99,7 +99,6 @@ const UploadImages = (props) => {
         alignItems: "center",
       }}
     >
-
         <input
           type="file"
           name="upload"

@@ -20,7 +20,7 @@ const Navigation = () => {
       })
       .catch((error) => console.log(error));
   };
-
+  
   return (
     <>
       <Navbar bg="dark" variant="dark">
@@ -36,7 +36,7 @@ const Navigation = () => {
           ) : (
             <Nav.Link href="/appointments">Schedule</Nav.Link>
           )}
-          {jobRole === "receptionist" && jobRole === "MD" && (
+          {(jobRole === "receptionist" || jobRole === "MD") && (
             <Nav.Link href="/patients">Patients</Nav.Link>
           )}
           {jobRole === "receptionist" && (

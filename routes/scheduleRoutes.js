@@ -54,6 +54,23 @@ router.get("/api/appointment/:appointmentId", (req, res) => {
   });
 });
 
+
+//GET ALL APPOINTMENTS FOR USER
+router.get("/api/appointment/get/:patientId", (req, res) => {
+  let query = `
+    SELECT * FROM appointments WHERE patientId="${req.params.patientId}"
+    `;
+
+  pool.query(query, async (error, results, fields) => {
+    if (error) {
+      console.log(error);
+      res.status(400).send("Unable to retrieve appointment");
+    }
+    console.log({id: req.params.patientId, results})
+    res.status(200).send(results);
+  });
+});
+
 //CREATE APPOINTMENT
 router.post("/api/appointment/create", (req, res) => {
   const {
