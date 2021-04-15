@@ -152,17 +152,22 @@ function Schedule() {
                           href="#"
                           onClick={(e) => {
                             e.preventDefault();
-                            if (status === "Not Started") {
+                            if (
+                              status === "Not Started" &&
+                              jobRole === "technician"
+                            ) {
                               addToast("Patient has not checked in yet.", {
                                 appearance: "info",
                                 autoDismiss: true,
                               });
                             } else {
                               window.location =
-                                jobRole === "technician" ||
-                                jobRole === "radiologist"
+                                jobRole === "MD"
+                                  ? `/appointments/${appointmentId}`
+                                  : jobRole === "radiologist" ||
+                                    jobRole === "technician"
                                   ? `/worklist/${appointmentId}`
-                                  : `/appointments/${appointmentId}`;
+                                  : `/patients/${patientId}`;
                             }
                           }}
                         >{`${lastName}, ${firstName}`}</a>
