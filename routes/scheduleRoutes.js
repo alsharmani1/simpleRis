@@ -19,7 +19,7 @@ router.post("/api/appointments", (req, res) => {
   let query = `
     SELECT appointments.*, patients.firstName, patients.lastName 
     FROM appointments INNER JOIN patients on appointments.patientId=patients.id 
-    WHERE appointments.date="${today}"
+    WHERE appointments.date="${today}" AND appointments.status="Not Started" OR appointments.status="Pending"
     `;
 
   query =
@@ -29,6 +29,8 @@ router.post("/api/appointments", (req, res) => {
       : jobRole === "technician"
       ? query + ` AND appointments.appointmentId LIKE '%RT-%'`
       : query;
+
+      console.log(query)
 
   pool.query(query, async (error, results, fields) => {
     if (error) {
