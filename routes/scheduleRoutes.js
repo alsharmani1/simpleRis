@@ -29,9 +29,7 @@ router.post("/api/appointments", (req, res) => {
       : jobRole === "technician"
       ? query + ` AND appointments.appointmentId LIKE '%RT-%'`
       : query;
-
-      console.log(query)
-
+      
   pool.query(query, async (error, results, fields) => {
     if (error) {
       console.log(error);
