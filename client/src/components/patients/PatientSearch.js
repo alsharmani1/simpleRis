@@ -79,7 +79,7 @@ const PatientSearch = (props) => {
 
     validFields &&
       axios
-        .post("/api/patient/create", { ...state.search, middleInitial: "" })
+        .post("/api/patient/create", { ...state.search })
         .then((res) => {
           window.location = "/patients";
         })
